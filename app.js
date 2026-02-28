@@ -54,7 +54,7 @@
 
 // Set this to your deployed Cloudflare Worker URL to enable MailerLite sync.
 // Leave empty string to disable (submissions still saved to localStorage).
-const MAILERLITE_PROXY_URL = '';
+const MAILERLITE_PROXY_URL = 'https://crs365-tool-matcher-api.crshoop300.workers.dev';
 
 // ============ TOOL DATABASE (embedded) ============
 const TOOLS_DB = [
