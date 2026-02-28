@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRS365 AI Tool Matcher — Find Your Perfect Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="https://crs365.com" target="_blank" rel="noopener noreferrer" class="logo-link">
+                <img src="./assets/crs-logo.png" alt="CRS365" class="logo-img">
+                <span class="logo-text">CRS<span class="logo-365">365</span></span>
+            </a>
+            <nav class="header-nav">
+                <a href="https://crs365.com" target="_blank" rel="noopener noreferrer">crs365.com</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (Step 1) -->
+    <section id="hero-section" class="section hero-section active">
+        <div class="hero-content">
+            <div class="hero-badge">AI-Powered Tool Matching</div>
+            <h1>Find Your Perfect<br>AI &amp; Automation Stack</h1>
+            <p class="hero-sub">Answer a few questions about your business, and our AI matcher will recommend the best tools — with a custom <strong>CRS Fit Score</strong> showing how well each aligns with your needs.</p>
+            <button id="start-btn" class="btn btn-primary btn-large">
+                Start Your Free Match
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="social-proof">
+                <div class="proof-avatars">
+                    <div class="avatar a1"></div>
+                    <div class="avatar a2"></div>
+                    <div class="avatar a3"></div>
+                    <div class="avatar a4"></div>
+                </div>
+                <span>Join <strong>500+</strong> businesses who've optimized their stack with CRS</span>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-card hc1">
+                <div class="hc-score">94</div>
+                <div class="hc-label">Fit Score</div>
+            </div>
+            <div class="hero-card hc2">
+                <div class="hc-icon">⚡</div>
+                <div class="hc-label">Automation</div>
+            </div>
+            <div class="hero-card hc3">
+                <div class="hc-icon">🎯</div>
+                <div class="hc-label">CRM Match</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ASSESSMENT FORM (Step 2) -->
+    <section id="assessment-section" class="section assessment-section">
+        <div class="form-container">
+            <div class="form-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progress-text">Question 1 of 6</span>
+            </div>
+
+            <!-- Question 1: Company Size -->
+            <div class="form-step" data-step="1">
+                <h2>What's your company size?</h2>
+                <p class="form-hint">This helps us recommend tools that scale with your team.</p>
+                <div class="radio-group">
+                    <label class="radio-card">
+                        <input type="radio" name="companySize" value="Solo/Freelancer">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">👤</span>
+                            <span class="radio-label">Solo / Freelancer</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="companySize" value="2-10 employees">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">👥</span>
+                            <span class="radio-label">2–10 employees</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="companySize" value="11-50">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">🏢</span>
+                            <span class="radio-label">11–50 employees</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="companySize" value="51-200">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">🏬</span>
+                            <span class="radio-label">51–200 employees</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="companySize" value="200+">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">🏗️</span>
+                            <span class="radio-label">200+ employees</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 2: Industry -->
+            <div class="form-step" data-step="2">
+                <h2>What industry are you in?</h2>
+                <p class="form-hint">Different industries have different tool needs. We'll tailor our picks accordingly.</p>
+                <div class="select-wrapper">
+                    <select id="industry-select" name="industry">
+                        <option value="" disabled selected>Select your industry...</option>
+                        <option value="Technology/SaaS">Technology / SaaS</option>
+                        <option value="E-commerce/Retail">E-commerce / Retail</option>
+                        <option value="Professional Services">Professional Services</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Marketing/Agency">Marketing / Agency</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Education">Education</option>
+                        <option value="Real Estate">Real Estate</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div id="other-industry-wrapper" class="other-input-wrapper hidden">
+                    <input type="text" id="other-industry" placeholder="Tell us your industry..." class="text-input">
+                </div>
+            </div>
+
+            <!-- Question 3: Challenges -->
+            <div class="form-step" data-step="3">
+                <h2>What's your biggest operational challenge?</h2>
+                <p class="form-hint">Select all that apply — we'll match tools to each challenge.</p>
+                <div class="checkbox-group">
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Manual data entry & repetitive tasks">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🔄</span>
+                            <span class="cb-label">Manual data entry &amp; repetitive tasks</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Disconnected tools/systems">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🔗</span>
+                            <span class="cb-label">Disconnected tools / systems</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Lead management & follow-up">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">📋</span>
+                            <span class="cb-label">Lead management &amp; follow-up</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Content creation at scale">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">✍️</span>
+                            <span class="cb-label">Content creation at scale</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Data analysis & reporting">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">📊</span>
+                            <span class="cb-label">Data analysis &amp; reporting</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Customer support efficiency">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🎧</span>
+                            <span class="cb-label">Customer support efficiency</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Sales pipeline visibility">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">📈</span>
+                            <span class="cb-label">Sales pipeline visibility</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="challenges" value="Team collaboration across tools">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🤝</span>
+                            <span class="cb-label">Team collaboration across tools</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4: Budget -->
+            <div class="form-step" data-step="4">
+                <h2>What's your monthly budget for tools?</h2>
+                <p class="form-hint">We'll prioritize tools that fit your price range.</p>
+                <div class="radio-group">
+                    <label class="radio-card">
+                        <input type="radio" name="budget" value="Under $50/mo">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">💰</span>
+                            <span class="radio-label">Under $50/mo</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="budget" value="$50-200/mo">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">💰💰</span>
+                            <span class="radio-label">$50 – $200/mo</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="budget" value="$200-500/mo">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">💰💰💰</span>
+                            <span class="radio-label">$200 – $500/mo</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="budget" value="$500-1000/mo">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">💎</span>
+                            <span class="radio-label">$500 – $1,000/mo</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="budget" value="$1000+/mo">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">💎💎</span>
+                            <span class="radio-label">$1,000+/mo</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 5: Current Tools -->
+            <div class="form-step" data-step="5">
+                <h2>What tools do you currently use?</h2>
+                <p class="form-hint">We'll check how well new tools integrate with your existing stack.</p>
+                <div class="checkbox-group">
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="currentTools" value="Google Workspace">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🔵</span>
+                            <span class="cb-label">Google Workspace</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="currentTools" value="Microsoft 365">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🟦</span>
+                            <span class="cb-label">Microsoft 365</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="currentTools" value="Slack">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">💬</span>
+                            <span class="cb-label">Slack</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="currentTools" value="None/Just getting started">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">🆕</span>
+                            <span class="cb-label">None / Just getting started</span>
+                        </div>
+                    </label>
+                    <label class="checkbox-card">
+                        <input type="checkbox" name="currentTools" value="Other">
+                        <div class="checkbox-card-inner">
+                            <span class="cb-icon">📦</span>
+                            <span class="cb-label">Other</span>
+                        </div>
+                    </label>
+                </div>
+                <div id="other-tools-wrapper" class="other-input-wrapper hidden">
+                    <input type="text" id="other-tools" placeholder="What other tools do you use?" class="text-input">
+                </div>
+            </div>
+
+            <!-- Question 6: Tech Level -->
+            <div class="form-step" data-step="6">
+                <h2>What's your technical comfort level?</h2>
+                <p class="form-hint">We'll match tools to your team's technical expertise.</p>
+                <div class="radio-group radio-group-vertical">
+                    <label class="radio-card radio-card-wide">
+                        <input type="radio" name="techLevel" value="Non-technical">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">🟢</span>
+                            <div class="radio-text">
+                                <span class="radio-label">Non-technical</span>
+                                <span class="radio-desc">Need simple, intuitive tools with minimal setup</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="radio-card radio-card-wide">
+                        <input type="radio" name="techLevel" value="Somewhat technical">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">🟡</span>
+                            <div class="radio-text">
+                                <span class="radio-label">Somewhat technical</span>
+                                <span class="radio-desc">Can handle moderate setup and configuration</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="radio-card radio-card-wide">
+                        <input type="radio" name="techLevel" value="Very technical">
+                        <div class="radio-card-inner">
+                            <span class="radio-icon">🔴</span>
+                            <div class="radio-text">
+                                <span class="radio-label">Very technical</span>
+                                <span class="radio-desc">Comfortable with APIs, code, and complex integrations</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Form Navigation -->
+            <div class="form-nav">
+                <button id="prev-btn" class="btn btn-secondary" style="visibility: hidden;">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M16 10H4m0 0l4 4m-4-4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Back
+                </button>
+                <button id="next-btn" class="btn btn-primary" disabled>
+                    Continue
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- EMAIL GATE (Step 3) -->
+    <section id="email-section" class="section email-section">
+        <div class="email-container">
+            <div class="email-header">
+                <div class="checkmark-circle">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M10 16l4 4 8-8" stroke="#0D4F4F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h2>Almost there!</h2>
+                <p>Enter your details to see your personalized results.</p>
+            </div>
+            <form id="email-form" class="email-form">
+                <div class="form-field">
+                    <label for="user-name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="user-name" required placeholder="John Smith" class="text-input">
+                </div>
+                <div class="form-field">
+                    <label for="user-email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="user-email" required placeholder="john@company.com" class="text-input">
+                </div>
+                <div class="form-field">
+                    <label for="user-company">Company Name <span class="optional">(optional)</span></label>
+                    <input type="text" id="user-company" placeholder="Acme Inc." class="text-input">
+                </div>
+                <label class="newsletter-check">
+                    <input type="checkbox" id="newsletter-opt" checked>
+                    <span>I'd like to receive weekly Tool Spotlight updates</span>
+                </label>
+                <button type="submit" class="btn btn-primary btn-large btn-full">
+                    See My Results
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <p class="fine-print">Free forever. No credit card needed. Get a complimentary 30-minute consultation.</p>
+            </form>
+        </div>
+    </section>
+
+    <!-- RESULTS DASHBOARD (Step 4) -->
+    <section id="results-section" class="section results-section">
+        <div class="results-container">
+            <!-- Results Header -->
+            <div class="results-header">
+                <h2>Your Personalized Recommendations</h2>
+                <p class="results-subtitle" id="results-subtitle">Based on your profile, here are the tools we recommend for your business.</p>
+            </div>
+
+            <!-- Top Matches -->
+            <div class="top-matches" id="top-matches">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- CTA Section (#1 Match) -->
+            <div class="results-cta" id="results-cta">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Tool Spotlight -->
+            <div class="spotlight-section" id="spotlight-section">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="All">All</button>
+                    <button class="filter-tab" data-filter="Workflow Automation">Automation</button>
+                    <button class="filter-tab" data-filter="AI & Custom GPTs">AI & GPTs</button>
+                    <button class="filter-tab" data-filter="CRM & Sales">CRM & Sales</button>
+                    <button class="filter-tab" data-filter="Analytics & BI">Analytics</button>
+                </div>
+                <div class="filter-actions">
+                    <select id="sort-select" class="sort-select">
+                        <option value="score">Sort by Fit Score</option>
+                        <option value="price-asc">Sort by Price (Low→High)</option>
+                        <option value="ease">Sort by Ease</option>
+                    </select>
+                    <button id="compare-btn" class="btn btn-secondary btn-sm" disabled>
+                        Compare (0)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Full Results Grid -->
+            <div class="results-grid" id="results-grid">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Comparison Modal -->
+            <div class="comparison-modal" id="comparison-modal">
+                <div class="comparison-overlay"></div>
+                <div class="comparison-panel">
+                    <div class="comparison-header">
+                        <h3>Side-by-Side Comparison</h3>
+                        <button class="close-modal" id="close-compare">&times;</button>
+                    </div>
+                    <div class="comparison-body" id="comparison-body">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="https://crs365.com" target="_blank" rel="noopener noreferrer" class="logo-link">
+                    <img src="./assets/crs-logo.png" alt="CRS365" class="logo-img logo-img-sm">
+                    <span class="logo-text">CRS<span class="logo-365">365</span></span>
+                </a>
+                <p>Optimize. Automate. Operate.</p>
+            </div>
+            <div class="footer-links">
+                <a href="https://crs365.com" target="_blank" rel="noopener noreferrer">Website</a>
+                <a href="https://calendly.com/chadshoop/30-minute-consult" target="_blank" rel="noopener noreferrer">Book Consultation</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 CRS365. All rights reserved. <span class="admin-trigger" onclick="showAdminLogin()">&#9881;</span></p>
+        </div>
+    </footer>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-overlay" id="admin-overlay" style="display:none;">
+        <div class="admin-panel">
+            <div class="admin-header">
+                <h3>CRS365 Admin — Lead Submissions</h3>
+                <button class="close-modal" onclick="closeAdmin()">&times;</button>
+            </div>
+            <div class="admin-login" id="admin-login">
+                <p>Enter admin password to view submissions.</p>
+                <div class="form-field" style="max-width:320px;margin:16px auto;">
+                    <input type="password" id="admin-pw" placeholder="Password" class="text-input" onkeydown="if(event.key==='Enter')adminAuth()">
+                </div>
+                <button class="btn btn-primary" onclick="adminAuth()">Unlock</button>
+                <p class="admin-error" id="admin-error" style="display:none;color:var(--red);margin-top:12px;font-size:13px;">Incorrect password.</p>
+            </div>
+            <div class="admin-content" id="admin-content" style="display:none;">
+                <div class="admin-toolbar">
+                    <span class="admin-count" id="admin-count">0 submissions</span>
+                    <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
+                    <button class="btn btn-secondary btn-sm" onclick="refreshAdmin()">Refresh</button>
+                </div>
+                <div class="admin-table-wrap">
+                    <table class="admin-table" id="admin-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Size</th>
+                                <th>Industry</th>
+                                <th>Challenges</th>
+                                <th>Budget</th>
+                                <th>Current Tools</th>
+                                <th>Tech Level</th>
+                                <th>Newsletter</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+</html>
