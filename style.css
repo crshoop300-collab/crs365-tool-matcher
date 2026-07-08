@@ -1,5 +1,5 @@
 /* =============================================
-   CRS365 AI Tool Matcher — Style Sheet
+   CRS365 AI Tool Matcher - Style Sheet
    Premium Consulting Aesthetic
    ============================================= */
 
@@ -568,7 +568,7 @@ body {
 }
 
 .select-wrapper::after {
-    content: '▾';
+    content: 'v';
     position: absolute;
     right: 16px;
     top: 50%;

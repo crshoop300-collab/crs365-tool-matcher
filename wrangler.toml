@@ -1,0 +1,7 @@
+name = "crs365-tool-matcher-api"
+main = "workers/brevo-proxy.js"
+compatibility_date = "2026-07-08"
+
+[vars]
+BREVO_LIST_ID = "17"
+ALLOWED_ORIGIN = "https://fitscore.crs365.com"

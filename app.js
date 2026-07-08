@@ -1,95 +1,54 @@
 /* =============================================
-   CRS365 AI Tool Matcher — Application Logic
+   CRS365 AI Tool Matcher - Application Logic
    GitHub Pages / Static Version
    ============================================= */
 
 /*
-  NOTE — MailerLite Integration:
-  MailerLite's API does not support direct browser-side calls (CORS is blocked).
-  To add subscribers to MailerLite from a static site, deploy a small serverless
-  proxy. Below is a ready-to-use Cloudflare Worker script:
-
-  -----------------------------------------------------------------------
-  // Cloudflare Worker — paste into workers.cloudflare.com
-  const MAILERLITE_API_KEY = 'YOUR_API_KEY';
-  const GROUP_ID = '180616843866670205';
-
-  export default {
-    async fetch(request) {
-      if (request.method === 'OPTIONS') {
-        return new Response(null, {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-          }
-        });
-      }
-      const body = await request.json();
-      const response = await fetch('https://connect.mailerlite.com/api/subscribers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${MAILERLITE_API_KEY}`
-        },
-        body: JSON.stringify({
-          email: body.email,
-          fields: { name: body.name, company: body.company },
-          groups: [GROUP_ID]
-        })
-      });
-      const result = await response.json();
-      return new Response(JSON.stringify(result), {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
-    }
-  };
-  // After deploying the Worker, replace the MAILERLITE_PROXY_URL constant
-  // below with your Worker's URL (e.g. https://crs-mailerlite.yourname.workers.dev)
-  -----------------------------------------------------------------------
+  NOTE - Brevo Integration:
+  Brevo API keys must never be exposed in browser-side code. This app sends
+  lead submissions to a small serverless proxy, which then creates or updates
+  the contact in Brevo. See workers/brevo-proxy.js for the Cloudflare Worker
+  template and deployment notes.
 */
 
-// Set this to your deployed Cloudflare Worker URL to enable MailerLite sync.
+// Set this to your deployed Cloudflare Worker URL to enable Brevo sync.
 // Leave empty string to disable (submissions still saved to localStorage).
-const MAILERLITE_PROXY_URL = 'https://crs365-tool-matcher-api.crshoop300.workers.dev';
+const BREVO_PROXY_URL = 'https://crs365-tool-matcher-api.crshoop300.workers.dev';
 
 // ============ TOOL DATABASE (embedded) ============
 const TOOLS_DB = [
   {"id":1,"name":"Zapier","category":"Workflow Automation","description":"Connect your apps and automate workflows with 6,000+ integrations. No code required.","whyMatch":"Eliminates manual data entry by connecting all your existing tools automatically.","pricing":"$19.99/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Automating repetitive tasks between apps","pros":["6,000+ app integrations","No-code interface","Multi-step workflows","Excellent documentation"],"cons":["Can get expensive at scale","Task limits on lower plans","Complex logic can be tricky"],"integrations":["Google Workspace","Microsoft 365","Slack","Salesforce","HubSpot"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools"]},
   {"id":2,"name":"Make (Integromat)","category":"Workflow Automation","description":"Visual automation platform for designing, building, and automating complex workflows.","whyMatch":"Visual workflow builder ideal for complex multi-step automations at a fraction of Zapier's cost.","pricing":"$9/mo","priceValue":9,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Complex multi-step automations with branching logic","pros":["More affordable than Zapier","Visual scenario builder","Advanced logic (routers, filters)","Generous free tier"],"cons":["Steeper learning curve","Fewer native integrations","UI can feel overwhelming"],"integrations":["Google Workspace","Microsoft 365","Slack","Shopify","Airtable"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems"]},
-  {"id":3,"name":"n8n","category":"Workflow Automation","description":"Open-source workflow automation tool with self-hosting option and fair-code license.","whyMatch":"Full automation power with self-hosting flexibility — ideal for technical teams wanting total control.","pricing":"$20/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Advanced","bestFor":"Technical teams wanting self-hosted automation","pros":["Self-hostable","No vendor lock-in","200+ integrations","Custom code nodes"],"cons":["Requires technical setup","Smaller community","Self-hosting needs maintenance"],"integrations":["Google Workspace","Microsoft 365","Slack","PostgreSQL","REST APIs"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools"]},
-  {"id":4,"name":"ChatGPT Team","category":"AI & Custom GPTs","description":"OpenAI's ChatGPT with team features, custom GPTs, and advanced data analysis.","whyMatch":"Create custom AI assistants for content, analysis, and customer-facing tasks — no coding needed.","pricing":"$25/user/mo","priceValue":25,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Content creation, data analysis, and custom AI assistants","pros":["Custom GPT builders","Advanced data analysis","Team workspace","Constantly improving"],"cons":["Per-user pricing adds up","Outputs need human review","Data privacy considerations"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Content creation at scale","Data analysis & reporting","Customer support efficiency"],"spotlight":true},
-  {"id":5,"name":"Claude for Business","category":"AI & Custom GPTs","description":"Anthropic's Claude AI with enterprise features, long-context windows, and safety-focused design.","whyMatch":"Best-in-class for long document analysis and nuanced writing — with enterprise-grade safety.","pricing":"$28/user/mo","priceValue":28,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Long document analysis, writing, and research","pros":["200K context window","Excellent reasoning","Strong safety features","Great for writing"],"cons":["Fewer integrations than ChatGPT","Per-user pricing","Less multimodal capability"],"integrations":["Google Workspace","Slack","Zapier","REST APIs"],"challenges":["Content creation at scale","Data analysis & reporting"]},
-  {"id":6,"name":"HubSpot CRM","category":"CRM & Sales","description":"All-in-one CRM platform with marketing, sales, and service hubs built on a free core.","whyMatch":"Unified CRM that connects marketing, sales, and support — with a genuinely useful free tier.","pricing":"$15/user/mo","priceValue":15,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Growing businesses needing an all-in-one CRM","pros":["Generous free tier","All-in-one platform","Excellent onboarding","1,000+ integrations"],"cons":["Gets expensive at higher tiers","Can be complex to configure","Some features locked behind upgrades"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier","Salesforce"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency","Disconnected tools/systems"]},
+  {"id":3,"name":"n8n","category":"Workflow Automation","description":"Open-source workflow automation tool with self-hosting option and fair-code license.","whyMatch":"Full automation power with self-hosting flexibility - ideal for technical teams wanting total control.","pricing":"$20/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Advanced","bestFor":"Technical teams wanting self-hosted automation","pros":["Self-hostable","No vendor lock-in","200+ integrations","Custom code nodes"],"cons":["Requires technical setup","Smaller community","Self-hosting needs maintenance"],"integrations":["Google Workspace","Microsoft 365","Slack","PostgreSQL","REST APIs"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools"]},
+  {"id":4,"name":"ChatGPT Team","category":"AI & Custom GPTs","description":"OpenAI's ChatGPT with team features, custom GPTs, and advanced data analysis.","whyMatch":"Create custom AI assistants for content, analysis, and customer-facing tasks - no coding needed.","pricing":"$25/user/mo","priceValue":25,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Content creation, data analysis, and custom AI assistants","pros":["Custom GPT builders","Advanced data analysis","Team workspace","Constantly improving"],"cons":["Per-user pricing adds up","Outputs need human review","Data privacy considerations"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Content creation at scale","Data analysis & reporting","Customer support efficiency"],"spotlight":true},
+  {"id":5,"name":"Claude for Business","category":"AI & Custom GPTs","description":"Anthropic's Claude AI with enterprise features, long-context windows, and safety-focused design.","whyMatch":"Useful for long document analysis and nuanced writing, with enterprise-focused safety controls.","pricing":"$28/user/mo","priceValue":28,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Long document analysis, writing, and research","pros":["200K context window","Excellent reasoning","Strong safety features","Great for writing"],"cons":["Fewer integrations than ChatGPT","Per-user pricing","Less multimodal capability"],"integrations":["Google Workspace","Slack","Zapier","REST APIs"],"challenges":["Content creation at scale","Data analysis & reporting"]},
+  {"id":6,"name":"HubSpot CRM","category":"CRM & Sales","description":"All-in-one CRM platform with marketing, sales, and service hubs built on a free core.","whyMatch":"Unified CRM that connects marketing, sales, and support - with a genuinely useful free tier.","pricing":"$15/user/mo","priceValue":15,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Growing businesses needing an all-in-one CRM","pros":["Generous free tier","All-in-one platform","Excellent onboarding","1,000+ integrations"],"cons":["Gets expensive at higher tiers","Can be complex to configure","Some features locked behind upgrades"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier","Salesforce"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency","Disconnected tools/systems"]},
   {"id":7,"name":"Pipedrive","category":"CRM & Sales","description":"Sales-focused CRM built by salespeople, with visual pipeline management and smart automation.","whyMatch":"Visual pipeline management that keeps your sales team focused on deals that matter most.","pricing":"$14/user/mo","priceValue":14,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Sales teams wanting visual pipeline management","pros":["Intuitive visual pipeline","Sales-focused features","Great mobile app","Affordable per-user pricing"],"cons":["Limited marketing features","Basic reporting on lower plans","Fewer integrations than HubSpot"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility"]},
-  {"id":8,"name":"Salesforce Essentials","category":"CRM & Sales","description":"Enterprise-grade CRM scaled for small businesses with AI-powered insights and automation.","whyMatch":"Enterprise-grade CRM power scaled for your business — with AI insights built in.","pricing":"$25/user/mo","priceValue":25,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"Businesses planning to scale that need enterprise CRM","pros":["Industry-leading CRM","Einstein AI insights","Massive ecosystem","Highly customizable"],"cons":["Steep learning curve","Implementation costs","Complex pricing structure"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier","REST APIs"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency","Data analysis & reporting"]},
+  {"id":8,"name":"Salesforce Essentials","category":"CRM & Sales","description":"CRM platform scaled for small businesses with AI-assisted insights and automation.","whyMatch":"CRM capabilities for growing teams, with AI-assisted insights built in.","pricing":"$25/user/mo","priceValue":25,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"Businesses planning to scale that need enterprise CRM","pros":["Large CRM ecosystem","Einstein AI insights","Massive ecosystem","Highly customizable"],"cons":["Steep learning curve","Implementation costs","Complex pricing structure"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier","REST APIs"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency","Data analysis & reporting"]},
   {"id":9,"name":"Looker Studio (Google)","category":"Analytics & BI","description":"Free business intelligence and data visualization tool by Google with native GCP integrations.","whyMatch":"Free, powerful dashboards that connect directly to your Google ecosystem.","pricing":"Free","priceValue":0,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Teams already in the Google ecosystem needing dashboards","pros":["Completely free","Native Google integrations","Shareable dashboards","Community connectors"],"cons":["Limited to Google ecosystem","Can be slow with large datasets","Less powerful than paid alternatives"],"integrations":["Google Workspace","REST APIs"],"challenges":["Data analysis & reporting"]},
   {"id":10,"name":"Power BI","category":"Analytics & BI","description":"Microsoft's business analytics platform with rich visualizations and enterprise data modeling.","whyMatch":"Enterprise-grade analytics that integrates seamlessly with your Microsoft stack.","pricing":"$10/user/mo","priceValue":10,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Microsoft-heavy organizations needing advanced analytics","pros":["Deep Microsoft integration","DAX for advanced modeling","Rich visualization library","Free desktop version"],"cons":["Best with Microsoft stack","DAX learning curve","Premium features expensive"],"integrations":["Microsoft 365","REST APIs","SQL databases"],"challenges":["Data analysis & reporting","Sales pipeline visibility"]},
   {"id":11,"name":"Notion AI","category":"AI & Custom GPTs","description":"All-in-one workspace with built-in AI for docs, wikis, projects, and knowledge management.","whyMatch":"Unified workspace where AI helps your team write, organize, and find information faster.","pricing":"$10/user/mo","priceValue":10,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Team knowledge management and project documentation","pros":["All-in-one workspace","Built-in AI assistant","Beautiful templates","Great for documentation"],"cons":["Can be slow with large databases","Offline access limited","Learning curve for advanced features"],"integrations":["Google Workspace","Slack","Zapier","GitHub"],"challenges":["Content creation at scale","Team collaboration across tools","Customer support efficiency"]},
-  {"id":12,"name":"Tableau","category":"Analytics & BI","description":"Industry-leading data visualization and analytics platform for exploring and sharing insights.","whyMatch":"Best-in-class data visualization for teams that need to explore data intuitively.","pricing":"$75/user/mo","priceValue":75,"hasFreeTier":false,"integrationEase":"Advanced","bestFor":"Data-driven organizations needing advanced visualization","pros":["Best-in-class visualizations","Powerful data exploration","Active community","Wide data connectivity"],"cons":["Expensive","Requires training","Heavy desktop application"],"integrations":["Google Workspace","Microsoft 365","REST APIs","SQL databases"],"challenges":["Data analysis & reporting"]},
+  {"id":12,"name":"Tableau","category":"Analytics & BI","description":"Data visualization and analytics platform for exploring and sharing insights.","whyMatch":"Data visualization for teams that need to explore and share business data.","pricing":"$75/user/mo","priceValue":75,"hasFreeTier":false,"integrationEase":"Advanced","bestFor":"Data-driven organizations needing advanced visualization","pros":["Strong visualizations","Powerful data exploration","Active community","Wide data connectivity"],"cons":["Expensive","Requires training","Heavy desktop application"],"integrations":["Google Workspace","Microsoft 365","REST APIs","SQL databases"],"challenges":["Data analysis & reporting"]},
   {"id":13,"name":"Intercom","category":"CRM & Sales","description":"AI-first customer service platform with chat, help desk, and proactive support features.","whyMatch":"AI-powered customer support that resolves issues automatically while keeping the human touch.","pricing":"$39/seat/mo","priceValue":39,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"SaaS companies needing AI-powered customer support","pros":["Fin AI chatbot","Unified inbox","Product tours","Rich customer data"],"cons":["Can get expensive","Complex pricing","Overwhelming feature set"],"integrations":["Google Workspace","Slack","Zapier","Salesforce"],"challenges":["Customer support efficiency","Lead management & follow-up"]},
   {"id":14,"name":"Airtable","category":"Workflow Automation","description":"Flexible low-code platform combining spreadsheet simplicity with database power and automations.","whyMatch":"Spreadsheet-meets-database flexibility that non-technical teams can build powerful apps on.","pricing":"$20/user/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Teams needing flexible data management without code","pros":["Intuitive interface","Powerful automations","Rich field types","Great API"],"cons":["Row limits on free plan","Can get expensive","Performance with large datasets"],"integrations":["Google Workspace","Slack","Zapier","Make"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools","Data analysis & reporting"]},
-  {"id":15,"name":"Jasper AI","category":"AI & Custom GPTs","description":"Enterprise AI content platform with brand voice, templates, and team collaboration features.","whyMatch":"Purpose-built for marketing content at scale — with brand voice consistency built in.","pricing":"$49/mo","priceValue":49,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Marketing teams creating content at scale","pros":["Brand voice training","50+ content templates","Team collaboration","Chrome extension"],"cons":["Expensive for individuals","Outputs still need editing","Limited outside marketing use"],"integrations":["Google Workspace","Zapier","Surfer SEO"],"challenges":["Content creation at scale"]},
+  {"id":15,"name":"Jasper AI","category":"AI & Custom GPTs","description":"Enterprise AI content platform with brand voice, templates, and team collaboration features.","whyMatch":"Purpose-built for marketing content at scale - with brand voice consistency built in.","pricing":"$49/mo","priceValue":49,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Marketing teams creating content at scale","pros":["Brand voice training","50+ content templates","Team collaboration","Chrome extension"],"cons":["Expensive for individuals","Outputs still need editing","Limited outside marketing use"],"integrations":["Google Workspace","Zapier","Surfer SEO"],"challenges":["Content creation at scale"]},
   {"id":16,"name":"Monday.com","category":"Workflow Automation","description":"Work OS platform for project management, automations, and team collaboration dashboards.","whyMatch":"Visual project hub that keeps everyone aligned with built-in automations and dashboards.","pricing":"$9/seat/mo","priceValue":9,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Teams needing visual project management with automations","pros":["Beautiful UI","200+ automations","Multiple board views","Dashboards included"],"cons":["Minimum 3-seat purchase","Can get complex quickly","Advanced features cost more"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Team collaboration across tools","Disconnected tools/systems","Manual data entry & repetitive tasks"]},
-  {"id":17,"name":"Perplexity Pro","category":"AI & Custom GPTs","description":"AI-powered research and answer engine with real-time web search, citations, and file analysis.","whyMatch":"AI research assistant that searches the web in real-time and cites every source — perfect for data-driven decisions.","pricing":"$20/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Research-heavy teams needing AI-powered information retrieval","pros":["Real-time web search","Source citations","File analysis","Multiple AI models"],"cons":["Less customizable than ChatGPT","Focused on search/research","Limited content generation templates"],"integrations":["REST APIs","Slack"],"challenges":["Data analysis & reporting","Content creation at scale"]},
-  {"id":18,"name":"ActiveCampaign","category":"CRM & Sales","description":"Email marketing and CRM platform with advanced automation, segmentation, and lead scoring.","whyMatch":"Best-in-class email automation with CRM built in — perfect for nurturing leads through complex funnels.","pricing":"$29/mo","priceValue":29,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"Businesses focused on email marketing and lead nurturing","pros":["Advanced automation builder","Built-in CRM","Lead scoring","900+ integrations"],"cons":["Steeper learning curve","Pricing increases with contacts","Can be overkill for simple needs"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier","Shopify"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency"]},
+  {"id":17,"name":"Perplexity Pro","category":"AI & Custom GPTs","description":"AI-powered research and answer engine with real-time web search, citations, and file analysis.","whyMatch":"AI research assistant with web search and citations for research-heavy teams.","pricing":"$20/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Research-heavy teams needing AI-powered information retrieval","pros":["Real-time web search","Source citations","File analysis","Multiple AI models"],"cons":["Less customizable than ChatGPT","Focused on search/research","Limited content generation templates"],"integrations":["REST APIs","Slack"],"challenges":["Data analysis & reporting","Content creation at scale"]},
+  {"id":18,"name":"ActiveCampaign","category":"CRM & Sales","description":"Email marketing and CRM platform with automation, segmentation, and lead scoring.","whyMatch":"Email automation with CRM features for teams that want structured lead follow-up.","pricing":"$29/mo","priceValue":29,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"Businesses focused on email marketing and lead nurturing","pros":["Advanced automation builder","Built-in CRM","Lead scoring","900+ integrations"],"cons":["Steeper learning curve","Pricing increases with contacts","Can be overkill for simple needs"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier","Shopify"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency"]},
   {"id":19,"name":"Microsoft Power Automate","category":"Workflow Automation","description":"Enterprise workflow automation with RPA capabilities, deeply integrated with the Microsoft 365 ecosystem.","whyMatch":"If your team lives in Microsoft 365, this extends every Office app with smart automations and desktop RPA.","pricing":"$15/user/mo","priceValue":15,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Microsoft 365 organizations needing enterprise workflow automation","pros":["Deep Microsoft 365 integration","RPA desktop automation included","AI Builder for intelligent workflows"],"cons":["Best value only with Microsoft 365","Complex licensing model","Less intuitive than Zapier or Make"],"integrations":["Microsoft 365","Slack","REST APIs"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools"]},
-  {"id":20,"name":"Workato","category":"Workflow Automation","description":"Enterprise-grade iPaaS connecting cloud and on-premise apps with AI-assisted recipe building for large organizations.","whyMatch":"Enterprise powerhouse for connecting complex multi-system workflows with governance and compliance built in.","pricing":"$15K–50K/yr","priceValue":1250,"hasFreeTier":false,"integrationEase":"Advanced","bestFor":"Mid-to-large enterprises with complex, multi-system automation needs","pros":["Enterprise governance with RBAC","On-premise connectivity","Workbot for Slack/Teams automation"],"cons":["No public pricing — requires sales","Very expensive for SMBs","Steep learning curve"],"integrations":["Microsoft 365","Slack","REST APIs"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools"]},
-  {"id":21,"name":"Activepieces","category":"Workflow Automation","description":"Open-source automation platform with drag-and-drop builder, self-hosting option, and flat-rate pricing.","whyMatch":"Zapier-like power with open-source flexibility — unlimited runs and predictable pricing for growing teams.","pricing":"$25/mo","priceValue":25,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Startups wanting Zapier functionality with open-source flexibility","pros":["Open-source with MIT license","Flat-rate pricing, unlimited runs","Built-in AI agents and MCP support"],"cons":["Smaller integration library (350+)","Less mature ecosystem","Enterprise features require custom contract"],"integrations":["Google Workspace","Slack","REST APIs","Zapier"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems"]},
-  {"id":22,"name":"Google Gemini","category":"AI & Custom GPTs","description":"Google's multimodal AI integrated across Google Workspace for text, image, video, and audio intelligence.","whyMatch":"AI deeply embedded in your Google Workspace — summarize emails, draft docs, and analyze data natively.","pricing":"$19.99/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Google Workspace users wanting native AI across Gmail, Docs, and Sheets","pros":["Deep Google Workspace integration","Competitive API pricing","Real-time Google Search grounding"],"cons":["Best value within Google ecosystem","Less established developer ecosystem","Advanced features need subscription"],"integrations":["Google Workspace","Zapier"],"challenges":["Content creation at scale","Data analysis & reporting"]},
-  {"id":23,"name":"Microsoft Copilot","category":"AI & Custom GPTs","description":"AI assistant embedded across Microsoft 365 apps — Word, Excel, Teams, Outlook — using organizational data.","whyMatch":"AI productivity baked into every Microsoft app your team already uses — summarize meetings, draft emails, analyze data.","pricing":"$30/user/mo","priceValue":30,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Microsoft 365 organizations wanting AI in Word, Excel, Teams, and Outlook","pros":["Seamless Microsoft 365 integration","Uses org data for context-aware AI","SMB pricing at $21/user/mo"],"cons":["Requires Microsoft 365 subscription","$30/user adds up for large teams","Feature depth varies across apps"],"integrations":["Microsoft 365","Slack"],"challenges":["Content creation at scale","Data analysis & reporting","Team collaboration across tools"]},
-  {"id":24,"name":"Custom GPT Builders","category":"AI & Custom GPTs","description":"Build customized, shareable AI assistants with specific instructions and knowledge — no coding required.","whyMatch":"Create branded AI assistants for your team or customers in minutes — no developers needed.","pricing":"$20/mo","priceValue":20,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Building branded, specialized AI assistants without coding","pros":["No-code builder","Included with ChatGPT Plus","Publishable to GPT Store"],"cons":["Limited to ChatGPT ecosystem","50MB upload limit per GPT","Requires paid ChatGPT plan"],"integrations":["Google Workspace","REST APIs","Zapier"],"challenges":["Content creation at scale","Customer support efficiency"]},
-  {"id":25,"name":"Relevance AI","category":"AI & Custom GPTs","description":"No-code platform for building AI agent workforces that automate complex multi-step business processes.","whyMatch":"Build autonomous AI agents that handle sales, support, and ops workflows — agents that work while you sleep.","pricing":"$19/mo","priceValue":19,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Businesses wanting AI agent workflows for sales and process automation","pros":["Multi-agent orchestration","9,000+ tools accessible to agents","No-code agent builder"],"cons":["Credit-based pricing is complex","20% LLM markup without own API key","Limited native integrations"],"integrations":["Google Workspace","Slack","Zapier"],"challenges":["Manual data entry & repetitive tasks","Lead management & follow-up","Customer support efficiency"]},
-  {"id":26,"name":"Close CRM","category":"CRM & Sales","description":"Sales-first CRM with built-in calling, SMS, and email for high-velocity inside sales teams.","whyMatch":"Built-in power dialer, SMS, and email in one CRM — designed for teams that sell by phone and outbound.","pricing":"$35/user/mo","priceValue":35,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"Inside sales and SDR teams doing high-volume outbound","pros":["Built-in power dialer and SMS","Transparent per-user pricing","Purpose-built for outbound sales"],"cons":["Expensive at 15+ reps","Limited marketing automation","Advanced features need Growth plan"],"integrations":["Google Workspace","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility"]},
-  {"id":27,"name":"Freshsales","category":"CRM & Sales","description":"AI-powered CRM with built-in telephony, Freddy AI for lead scoring, and deal insights at affordable pricing.","whyMatch":"Affordable CRM with AI lead scoring and built-in phone — all the power without the Salesforce price tag.","pricing":"$9/user/mo","priceValue":9,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"SMBs wanting AI-assisted CRM with built-in communication","pros":["Very competitive pricing","Freddy AI built-in","Native chat, email, and phone"],"cons":["Fewer integrations than HubSpot","Advanced AI locked to Pro+ plans","Less customizable than Salesforce"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency"]},
-  {"id":28,"name":"Zoho CRM","category":"CRM & Sales","description":"Highly customizable CRM with AI-powered automation, advanced analytics, and a free tier.","whyMatch":"Deep customization at a fraction of Salesforce pricing — with Zia AI assistant for smart predictions.","pricing":"$14/user/mo","priceValue":14,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Cost-conscious SMBs needing deep CRM customization","pros":["Most stable pricing in industry","Free plan for up to 3 users","Zia AI on Enterprise tier"],"cons":["UI less polished than HubSpot","AI features need Enterprise plan","Steeper learning curve"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility"]},
-  {"id":29,"name":"Looker","category":"Analytics & BI","description":"Google Cloud's enterprise BI platform with LookML semantic layer for consistent data definitions.","whyMatch":"Enterprise-grade BI with governed metrics — ideal for data-mature teams on Google Cloud.","pricing":"$60K+/yr","priceValue":5000,"hasFreeTier":false,"integrationEase":"Advanced","bestFor":"Enterprise data teams on Google Cloud needing governed analytics","pros":["LookML semantic layer","Strong embedded analytics","Native BigQuery integration"],"cons":["$60K+/year minimum","Requires developer expertise","Limited self-service for non-technical users"],"integrations":["Google Workspace","REST APIs"],"challenges":["Data analysis & reporting"]},
-  {"id":30,"name":"Mixpanel","category":"Analytics & BI","description":"Product analytics platform for event-based user behavior tracking, funnel analysis, and retention.","whyMatch":"Best-in-class funnel and retention analytics — see exactly where users drop off and why.","pricing":"$0 (1M events)","priceValue":0,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Product teams needing deep user journey and funnel analytics","pros":["Best funnel and retention analysis","Generous free tier (1M events)","Startup program — 1 year free"],"cons":["Pricing scales steeply","Advanced features are add-ons","Free tier reduced from 20M to 1M"],"integrations":["Google Workspace","Slack","REST APIs"],"challenges":["Data analysis & reporting"]},
-  {"id":31,"name":"Amplitude","category":"Analytics & BI","description":"Digital analytics platform combining event tracking, behavioral cohorts, A/B testing, and session replay.","whyMatch":"Full product intelligence suite — analytics, experiments, and session replay in one platform.","pricing":"$49/mo","priceValue":49,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Product teams needing advanced behavioral analytics with experimentation","pros":["Analytics + experiments + session replay","Strong behavioral cohort analysis","Dedicated customer success"],"cons":["Expensive at scale ($100K+/yr)","A/B testing priced separately","Complex pricing with add-ons"],"integrations":["Slack","REST APIs"],"challenges":["Data analysis & reporting"]},
-  {"id":32,"name":"Metabase","category":"Analytics & BI","description":"Open-source BI tool that lets non-technical users run queries and build dashboards through a simple interface.","whyMatch":"Free, self-hostable BI that your whole team can use — no SQL knowledge required.","pricing":"Free (self-hosted)","priceValue":0,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Startups wanting fast, accessible BI for non-technical stakeholders","pros":["Open-source and free to self-host","No SQL needed for basic queries","White-label embeddable analytics"],"cons":["Large price jump to Enterprise","Performance degrades at scale","Limited advanced visualizations"],"integrations":["REST APIs"],"challenges":["Data analysis & reporting"]}
+  {"id":20,"name":"Workato","category":"Workflow Automation","description":"Enterprise-grade iPaaS connecting cloud and on-premise apps with AI-assisted recipe building for large organizations.","whyMatch":"Enterprise powerhouse for connecting complex multi-system workflows with governance and compliance built in.","pricing":"$15K-50K/yr","priceValue":1250,"hasFreeTier":false,"integrationEase":"Advanced","bestFor":"Mid-to-large enterprises with complex, multi-system automation needs","pros":["Enterprise governance with RBAC","On-premise connectivity","Workbot for Slack/Teams automation"],"cons":["No public pricing - requires sales","Very expensive for SMBs","Steep learning curve"],"integrations":["Microsoft 365","Slack","REST APIs"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems","Team collaboration across tools"]},
+  {"id":21,"name":"Activepieces","category":"Workflow Automation","description":"Open-source automation platform with drag-and-drop builder, self-hosting option, and flat-rate pricing.","whyMatch":"Zapier-like power with open-source flexibility - unlimited runs and predictable pricing for growing teams.","pricing":"$25/mo","priceValue":25,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Startups wanting Zapier functionality with open-source flexibility","pros":["Open-source with MIT license","Flat-rate pricing, unlimited runs","Built-in AI agents and MCP support"],"cons":["Smaller integration library (350+)","Less mature ecosystem","Enterprise features require custom contract"],"integrations":["Google Workspace","Slack","REST APIs","Zapier"],"challenges":["Manual data entry & repetitive tasks","Disconnected tools/systems"]},
+  {"id":22,"name":"Google Gemini","category":"AI & Custom GPTs","description":"Google's multimodal AI integrated across Google Workspace for text, image, video, and audio intelligence.","whyMatch":"AI deeply embedded in your Google Workspace - summarize emails, draft docs, and analyze data natively.","pricing":"$19.99/mo","priceValue":20,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Google Workspace users wanting native AI across Gmail, Docs, and Sheets","pros":["Deep Google Workspace integration","Competitive API pricing","Real-time Google Search grounding"],"cons":["Best value within Google ecosystem","Less established developer ecosystem","Advanced features need subscription"],"integrations":["Google Workspace","Zapier"],"challenges":["Content creation at scale","Data analysis & reporting"]},
+  {"id":23,"name":"Microsoft Copilot","category":"AI & Custom GPTs","description":"AI assistant embedded across Microsoft 365 apps - Word, Excel, Teams, Outlook - using organizational data.","whyMatch":"AI productivity baked into every Microsoft app your team already uses - summarize meetings, draft emails, analyze data.","pricing":"$30/user/mo","priceValue":30,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"Microsoft 365 organizations wanting AI in Word, Excel, Teams, and Outlook","pros":["Seamless Microsoft 365 integration","Uses org data for context-aware AI","SMB pricing at $21/user/mo"],"cons":["Requires Microsoft 365 subscription","$30/user adds up for large teams","Feature depth varies across apps"],"integrations":["Microsoft 365","Slack"],"challenges":["Content creation at scale","Data analysis & reporting","Team collaboration across tools"]},
+  {"id":24,"name":"Custom GPT Builders","category":"AI & Custom GPTs","description":"Build customized, shareable AI assistants with specific instructions and knowledge - no coding required.","whyMatch":"Create branded AI assistants for your team or customers in minutes - no developers needed.","pricing":"$20/mo","priceValue":20,"hasFreeTier":false,"integrationEase":"Easy","bestFor":"Building branded, specialized AI assistants without coding","pros":["No-code builder","Included with ChatGPT Plus","Publishable to GPT Store"],"cons":["Limited to ChatGPT ecosystem","50MB upload limit per GPT","Requires paid ChatGPT plan"],"integrations":["Google Workspace","REST APIs","Zapier"],"challenges":["Content creation at scale","Customer support efficiency"]},
+  {"id":25,"name":"Relevance AI","category":"AI & Custom GPTs","description":"No-code platform for building AI agent workforces that automate complex multi-step business processes.","whyMatch":"Build AI-assisted workflows for sales, support, and operations tasks.","pricing":"$19/mo","priceValue":19,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Businesses wanting AI agent workflows for sales and process automation","pros":["Multi-agent orchestration","9,000+ tools accessible to agents","No-code agent builder"],"cons":["Credit-based pricing is complex","20% LLM markup without own API key","Limited native integrations"],"integrations":["Google Workspace","Slack","Zapier"],"challenges":["Manual data entry & repetitive tasks","Lead management & follow-up","Customer support efficiency"]},
+  {"id":26,"name":"Close CRM","category":"CRM & Sales","description":"Sales-first CRM with built-in calling, SMS, and email for high-velocity inside sales teams.","whyMatch":"Built-in power dialer, SMS, and email in one CRM - designed for teams that sell by phone and outbound.","pricing":"$35/user/mo","priceValue":35,"hasFreeTier":false,"integrationEase":"Moderate","bestFor":"Inside sales and SDR teams doing high-volume outbound","pros":["Built-in power dialer and SMS","Transparent per-user pricing","Purpose-built for outbound sales"],"cons":["Expensive at 15+ reps","Limited marketing automation","Advanced features need Growth plan"],"integrations":["Google Workspace","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility"]},
+  {"id":27,"name":"Freshsales","category":"CRM & Sales","description":"AI-powered CRM with built-in telephony, Freddy AI for lead scoring, and deal insights at affordable pricing.","whyMatch":"Affordable CRM with AI lead scoring and built-in phone - all the power without the Salesforce price tag.","pricing":"$9/user/mo","priceValue":9,"hasFreeTier":true,"integrationEase":"Easy","bestFor":"SMBs wanting AI-assisted CRM with built-in communication","pros":["Very competitive pricing","Freddy AI built-in","Native chat, email, and phone"],"cons":["Fewer integrations than HubSpot","Advanced AI locked to Pro+ plans","Less customizable than Salesforce"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility","Customer support efficiency"]},
+  {"id":28,"name":"Zoho CRM","category":"CRM & Sales","description":"Highly customizable CRM with AI-powered automation, advanced analytics, and a free tier.","whyMatch":"Deep customization at a fraction of Salesforce pricing - with Zia AI assistant for smart predictions.","pricing":"$14/user/mo","priceValue":14,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Cost-conscious SMBs needing deep CRM customization","pros":["Most stable pricing in industry","Free plan for up to 3 users","Zia AI on Enterprise tier"],"cons":["UI less polished than HubSpot","AI features need Enterprise plan","Steeper learning curve"],"integrations":["Google Workspace","Microsoft 365","Slack","Zapier"],"challenges":["Lead management & follow-up","Sales pipeline visibility"]},
+  {"id":29,"name":"Looker","category":"Analytics & BI","description":"Google Cloud's enterprise BI platform with LookML semantic layer for consistent data definitions.","whyMatch":"Enterprise-grade BI with governed metrics - ideal for data-mature teams on Google Cloud.","pricing":"$60K+/yr","priceValue":5000,"hasFreeTier":false,"integrationEase":"Advanced","bestFor":"Enterprise data teams on Google Cloud needing governed analytics","pros":["LookML semantic layer","Strong embedded analytics","Native BigQuery integration"],"cons":["$60K+/year minimum","Requires developer expertise","Limited self-service for non-technical users"],"integrations":["Google Workspace","REST APIs"],"challenges":["Data analysis & reporting"]},
+  {"id":30,"name":"Mixpanel","category":"Analytics & BI","description":"Product analytics platform for event-based user behavior tracking, funnel analysis, and retention.","whyMatch":"Funnel and retention analytics that help teams understand where users drop off.","pricing":"$0 (1M events)","priceValue":0,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Product teams needing deep user journey and funnel analytics","pros":["Detailed funnel and retention analysis","Generous free tier (1M events)","Startup program - 1 year free"],"cons":["Pricing scales steeply","Advanced features are add-ons","Free tier reduced from 20M to 1M"],"integrations":["Google Workspace","Slack","REST APIs"],"challenges":["Data analysis & reporting"]},
+  {"id":31,"name":"Amplitude","category":"Analytics & BI","description":"Digital analytics platform combining event tracking, behavioral cohorts, A/B testing, and session replay.","whyMatch":"Full product intelligence suite - analytics, experiments, and session replay in one platform.","pricing":"$49/mo","priceValue":49,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Product teams needing advanced behavioral analytics with experimentation","pros":["Analytics + experiments + session replay","Strong behavioral cohort analysis","Dedicated customer success"],"cons":["Expensive at scale ($100K+/yr)","A/B testing priced separately","Complex pricing with add-ons"],"integrations":["Slack","REST APIs"],"challenges":["Data analysis & reporting"]},
+  {"id":32,"name":"Metabase","category":"Analytics & BI","description":"Open-source BI tool that lets non-technical users run queries and build dashboards through a simple interface.","whyMatch":"Free, self-hostable BI that your whole team can use - no SQL knowledge required.","pricing":"Free (self-hosted)","priceValue":0,"hasFreeTier":true,"integrationEase":"Moderate","bestFor":"Startups wanting fast, accessible BI for non-technical stakeholders","pros":["Open-source and free to self-host","No SQL needed for basic queries","White-label embeddable analytics"],"cons":["Large price jump to Enterprise","Performance degrades at scale","Limited advanced visualizations"],"integrations":["REST APIs"],"challenges":["Data analysis & reporting"]}
 ];
 
 // ============ STATE ============
@@ -271,6 +230,19 @@ document.querySelectorAll('input[name="currentTools"]').forEach(cb => {
     });
 });
 
+// ============ TRACKING HELPERS ============
+function getTrackingParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        utm_source: params.get('utm_source') || '',
+        utm_medium: params.get('utm_medium') || '',
+        utm_campaign: params.get('utm_campaign') || '',
+        utm_content: params.get('utm_content') || '',
+        utm_term: params.get('utm_term') || '',
+        referrer: document.referrer || ''
+    };
+}
+
 // ============ EMAIL FORM SUBMISSION ============
 document.getElementById('email-form').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -278,9 +250,9 @@ document.getElementById('email-form').addEventListener('submit', async function(
     const name = document.getElementById('user-name').value.trim();
     const email = document.getElementById('user-email').value.trim();
     const company = document.getElementById('user-company').value.trim();
-    const newsletter = document.getElementById('newsletter-opt').checked;
+    const emailConsent = document.getElementById('newsletter-opt').checked;
 
-    if (!name || !email) return;
+    if (!name || !email || !emailConsent) return;
 
     // Show loading
     const submitBtn = this.querySelector('button[type="submit"]');
@@ -292,64 +264,64 @@ document.getElementById('email-form').addEventListener('submit', async function(
     formData.name = name;
     formData.email = email;
     formData.company = company;
-    formData.newsletterOptIn = newsletter;
+    formData.emailConsent = emailConsent;
 
-    // Save submission to localStorage
-    // NOTE: localStorage is per-browser/device. For cross-device access,
-    // view submissions via the MailerLite dashboard once a proxy is configured.
+    // Calculate scores before syncing so Brevo receives the top recommendation.
+    scoredTools = calculateScores();
+    const topMatch = scoredTools[0] || {};
+    const tracking = getTrackingParams();
+
+    const submission = {
+        id: Date.now(),
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        company_size: formData.companySize,
+        industry: formData.industry,
+        challenges: formData.challenges,
+        budget: formData.budget,
+        current_tools: formData.currentTools,
+        tech_level: formData.techLevel,
+        email_consent: formData.emailConsent,
+        newsletter_opt_in: formData.emailConsent,
+        top_match: topMatch.name || '',
+        top_score: topMatch.score || '',
+        submitted_at: new Date().toISOString(),
+        ...tracking
+    };
+
+    // Save submission to localStorage as a browser-only backup.
+    // NOTE: localStorage is per-browser/device. Use Brevo as the canonical list.
     try {
         const submissions = JSON.parse(localStorage.getItem('crs_submissions') || '[]');
-        const submission = {
-            id: Date.now(),
-            name: formData.name,
-            email: formData.email,
-            company: formData.company,
-            company_size: formData.companySize,
-            industry: formData.industry,
-            challenges: formData.challenges,
-            budget: formData.budget,
-            current_tools: formData.currentTools,
-            tech_level: formData.techLevel,
-            newsletter_opt_in: formData.newsletterOptIn,
-            submitted_at: new Date().toISOString()
-        };
         submissions.push(submission);
         localStorage.setItem('crs_submissions', JSON.stringify(submissions));
     } catch (err) {
         console.log('localStorage save failed (non-blocking):', err);
     }
 
-    // Sync to MailerLite via proxy (if configured)
-    if (MAILERLITE_PROXY_URL) {
+    // Sync to Brevo via proxy (if configured)
+    if (BREVO_PROXY_URL) {
         try {
-            await fetch(MAILERLITE_PROXY_URL, {
+            await fetch(BREVO_PROXY_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: formData.email,
-                    name: formData.name,
-                    company: formData.company
-                })
+                body: JSON.stringify(submission)
             });
         } catch (err) {
-            console.log('MailerLite proxy call failed (non-blocking):', err);
+            console.log('Brevo proxy call failed (non-blocking):', err);
         }
     }
 
-    // Calculate scores and show results
-    scoredTools = calculateScores();
-    
     // Simulate brief "analyzing" delay for UX
     await new Promise(r => setTimeout(r, 1200));
-    
+
     submitBtn.innerHTML = origHTML;
     submitBtn.disabled = false;
 
     showSection('results');
     renderResults();
 });
-
-
 // ============ CRS FIT SCORE ALGORITHM ============
 function calculateScores() {
     const results = TOOLS_DB.map(tool => {
@@ -598,7 +570,7 @@ function renderSpotlight() {
     const container = document.getElementById('spotlight-section');
     
     container.innerHTML = `
-        <span class="spotlight-badge">This Week's Spotlight</span>
+        <span class="spotlight-badge">Recommended Starting Point</span>
         <h3 class="spotlight-title">${spotlightTool.name}</h3>
         <p class="spotlight-desc">${spotlightTool.description}</p>
         <div class="spotlight-details">
@@ -619,7 +591,7 @@ function renderSpotlight() {
                 <span class="spotlight-detail-value">${spotlightTool.bestFor}</span>
             </div>
         </div>
-        <p class="spotlight-note">Updated weekly with real benchmarks and user insights.</p>
+        <p class="spotlight-note">Based on your answers and the tool information available in this assessment.</p>
     `;
 }
 
@@ -632,7 +604,7 @@ function renderCTA() {
         <div class="cta-content">
             <div class="cta-match-label">Your #1 Match</div>
             <h3 class="cta-match-title">${topTool.name} with a <span class="cta-score">${topTool.score}</span> CRS Fit Score</h3>
-            <p class="cta-desc">Book a Free 30-Minute Consultation to learn how CRS can implement this stack for your business — and help you avoid the common pitfalls.</p>
+            <p class="cta-desc">Book a free 30-minute consultation to review your results and discuss practical next steps for your business workflow.</p>
             <div class="cta-buttons">
                 <a href="https://calendly.com/chadshoop/30-minute-consult" target="_blank" rel="noopener noreferrer" class="btn-cta-primary">
                     Book Free Consultation
@@ -687,7 +659,7 @@ function toggleExpand(row) {
 function toggleCompare(toolId, checked) {
     if (checked) {
         if (selectedForCompare.length >= 3) {
-            // Uncheck — max 3
+            // Uncheck - max 3
             const cb = document.querySelector(`.result-row[data-tool-id="${toolId}"] .result-checkbox`);
             if (cb) cb.checked = false;
             return;
@@ -921,7 +893,7 @@ function downloadPDF() {
     const footerY = doc.internal.pageSize.getHeight() - 10;
     doc.setTextColor(150, 150, 150);
     doc.setFontSize(8);
-    doc.text('Generated by CRS365.com — Optimize. Automate. Operate.', pageWidth / 2, footerY, { align: 'center' });
+    doc.text('Generated by CRS365.com - Optimize. Automate. Operate.', pageWidth / 2, footerY, { align: 'center' });
     
     // Generate blob and download
     const pdfBlob = doc.output('blob');
@@ -970,8 +942,8 @@ function refreshAdmin() {
     // Reads submissions from localStorage.
     // NOTE: localStorage is per-browser/device. Submissions made in other
     // browsers or devices will not appear here. For a central database,
-    // connect a MailerLite proxy (see top-of-file comment) and use the
-    // MailerLite dashboard as your canonical subscriber list.
+    // connect the Brevo proxy (see workers/brevo-proxy.js) and use the
+    // Brevo dashboard as your canonical subscriber list.
     try {
         adminData = JSON.parse(localStorage.getItem('crs_submissions') || '[]');
         renderAdminTable(adminData);
@@ -995,7 +967,8 @@ function renderAdminTable(data) {
         const challenges = Array.isArray(s.challenges) ? s.challenges.join(', ') : (s.challenges || '');
         const tools = Array.isArray(s.current_tools) ? s.current_tools.join(', ') : (s.current_tools || '');
         const date = s.submitted_at ? new Date(s.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'N/A';
-        const nlBadge = s.newsletter_opt_in ? '<span class="admin-badge-yes">Yes</span>' : '<span class="admin-badge-no">No</span>';
+        const hasConsent = s.email_consent ?? s.newsletter_opt_in;
+        const nlBadge = hasConsent ? '<span class="admin-badge-yes">Yes</span>' : '<span class="admin-badge-no">No</span>';
 
         return `<tr>
             <td>${s.id || i + 1}</td>
@@ -1017,7 +990,7 @@ function renderAdminTable(data) {
 function exportCSV() {
     if (adminData.length === 0) return;
 
-    const headers = ['ID','Date','Name','Email','Company','Company Size','Industry','Challenges','Budget','Current Tools','Tech Level','Newsletter'];
+    const headers = ['ID','Date','Name','Email','Company','Company Size','Industry','Challenges','Budget','Current Tools','Tech Level','Consent'];
     const rows = adminData.map(s => [
         s.id,
         s.submitted_at || '',
@@ -1030,7 +1003,7 @@ function exportCSV() {
         s.budget || '',
         Array.isArray(s.current_tools) ? s.current_tools.join('; ') : (s.current_tools || ''),
         s.tech_level || '',
-        s.newsletter_opt_in ? 'Yes' : 'No'
+        (s.email_consent ?? s.newsletter_opt_in) ? 'Yes' : 'No'
     ]);
 
     const csv = [headers, ...rows].map(row =>
@@ -1056,3 +1029,12 @@ window.closeAdmin = closeAdmin;
 window.adminAuth = adminAuth;
 window.refreshAdmin = refreshAdmin;
 window.exportCSV = exportCSV;
+
+
+
+
+
+
+
+
+
