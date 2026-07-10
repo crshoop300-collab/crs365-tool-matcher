@@ -10,12 +10,13 @@
   - ALLOWED_ORIGIN: defaults to https://fitscore.crs365.com
 
   Important:
-  Any attributes sent to Brevo must exist in your Brevo account before they
-  can be stored on the contact. Create the custom attributes listed in
-  workers/brevo-setup.md, or simplify the attributes object below.
+  Any contact attributes sent to Brevo must exist in your Brevo account before
+  they can be stored on the contact. Event properties do not require contact
+  attributes and are used for the Brevo automation trigger.
 */
 
 const DEFAULT_ALLOWED_ORIGIN = 'https://fitscore.crs365.com';
+const FIT_SCORE_EVENT_NAME = 'crs_fit_score_completed';
 
 function corsHeaders(env) {
   return {
@@ -43,6 +44,70 @@ function splitName(fullName) {
   return {
     firstName: parts.slice(0, -1).join(' '),
     lastName: parts.slice(-1).join(' ')
+  };
+}
+
+function joinList(value) {
+  return Array.isArray(value) ? value.join(', ') : String(value || '');
+}
+
+function numberOrBlank(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : '';
+}
+
+async function postFitScoreEvent(env, email, attributes, body) {
+  const eventPayload = {
+    event_name: FIT_SCORE_EVENT_NAME,
+    identifiers: {
+      email_id: email
+    },
+    contact_properties: attributes,
+    event_properties: {
+      source: 'AI Fit Score',
+      top_match: String(body.top_match || ''),
+      top_score: numberOrBlank(body.top_score),
+      top_category: String(body.top_category || ''),
+      top_pricing: String(body.top_pricing || ''),
+      top_setup: String(body.top_setup || ''),
+      top_best_for: String(body.top_best_for || ''),
+      top_matches: String(body.top_matches || ''),
+      company_size: String(body.company_size || ''),
+      industry: String(body.industry || ''),
+      challenges: joinList(body.challenges),
+      budget: String(body.budget || ''),
+      current_tools: joinList(body.current_tools),
+      tech_level: String(body.tech_level || ''),
+      submitted_at: String(body.submitted_at || new Date().toISOString()),
+      utm_source: String(body.utm_source || ''),
+      utm_medium: String(body.utm_medium || ''),
+      utm_campaign: String(body.utm_campaign || ''),
+      utm_content: String(body.utm_content || ''),
+      utm_term: String(body.utm_term || '')
+    }
+  };
+
+  const brevoEventResponse = await fetch('https://api.brevo.com/v3/events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'api-key': env.BREVO_API_KEY
+    },
+    body: JSON.stringify(eventPayload)
+  });
+
+  const resultText = await brevoEventResponse.text();
+  let result;
+  try {
+    result = resultText ? JSON.parse(resultText) : {};
+  } catch (err) {
+    result = { raw: resultText };
+  }
+
+  return {
+    ok: brevoEventResponse.ok,
+    status: brevoEventResponse.status,
+    details: result
   };
 }
 
@@ -78,30 +143,31 @@ export default {
 
     const { firstName, lastName } = splitName(body.name);
     const listId = Number(env.BREVO_LIST_ID);
+    const attributes = {
+      FIRSTNAME: firstName,
+      LASTNAME: lastName,
+      COMPANY: body.company || '',
+      CRS_SOURCE: 'AI Fit Score',
+      CRS_COMPANY_SIZE: body.company_size || '',
+      CRS_INDUSTRY: body.industry || '',
+      CRS_CHALLENGES: joinList(body.challenges),
+      CRS_BUDGET: body.budget || '',
+      CRS_CURRENT_TOOLS: joinList(body.current_tools),
+      CRS_TECH_LEVEL: body.tech_level || '',
+      CRS_TOP_MATCH: body.top_match || '',
+      CRS_TOP_SCORE: body.top_score || '',
+      CRS_UTM_SOURCE: body.utm_source || '',
+      CRS_UTM_MEDIUM: body.utm_medium || '',
+      CRS_UTM_CAMPAIGN: body.utm_campaign || '',
+      CRS_UTM_CONTENT: body.utm_content || '',
+      CRS_UTM_TERM: body.utm_term || ''
+    };
 
     const payload = {
       email,
       listIds: [listId],
       updateEnabled: true,
-      attributes: {
-        FIRSTNAME: firstName,
-        LASTNAME: lastName,
-        COMPANY: body.company || '',
-        CRS_SOURCE: 'AI Fit Score',
-        CRS_COMPANY_SIZE: body.company_size || '',
-        CRS_INDUSTRY: body.industry || '',
-        CRS_CHALLENGES: Array.isArray(body.challenges) ? body.challenges.join(', ') : '',
-        CRS_BUDGET: body.budget || '',
-        CRS_CURRENT_TOOLS: Array.isArray(body.current_tools) ? body.current_tools.join(', ') : '',
-        CRS_TECH_LEVEL: body.tech_level || '',
-        CRS_TOP_MATCH: body.top_match || '',
-        CRS_TOP_SCORE: body.top_score || '',
-        CRS_UTM_SOURCE: body.utm_source || '',
-        CRS_UTM_MEDIUM: body.utm_medium || '',
-        CRS_UTM_CAMPAIGN: body.utm_campaign || '',
-        CRS_UTM_CONTENT: body.utm_content || '',
-        CRS_UTM_TERM: body.utm_term || ''
-      }
+      attributes
     };
 
     const brevoResponse = await fetch('https://api.brevo.com/v3/contacts', {
@@ -125,6 +191,13 @@ export default {
       return jsonResponse({ error: 'Brevo request failed', details: result }, brevoResponse.status, env);
     }
 
-    return jsonResponse({ ok: true, brevo: result }, 200, env);
+    let eventResult;
+    try {
+      eventResult = await postFitScoreEvent(env, email, attributes, body);
+    } catch (err) {
+      eventResult = { ok: false, error: err.message || 'Event request failed' };
+    }
+
+    return jsonResponse({ ok: true, brevo: result, event: eventResult }, 200, env);
   }
 };

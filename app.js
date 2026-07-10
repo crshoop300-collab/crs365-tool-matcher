@@ -259,6 +259,7 @@ document.getElementById('email-form').addEventListener('submit', async function(
     // Calculate scores before syncing so Brevo receives the top recommendation.
     scoredTools = calculateScores();
     const topMatch = scoredTools[0] || {};
+    const topMatches = scoredTools.slice(0, 3);
     const tracking = getTrackingParams();
 
     const submission = {
@@ -276,6 +277,11 @@ document.getElementById('email-form').addEventListener('submit', async function(
         newsletter_opt_in: formData.emailConsent,
         top_match: topMatch.name || '',
         top_score: topMatch.score || '',
+        top_category: topMatch.category || '',
+        top_pricing: topMatch.pricing || '',
+        top_setup: topMatch.integrationEase || '',
+        top_best_for: topMatch.bestFor || '',
+        top_matches: topMatches.map(tool => tool.name + ' (' + tool.score + ')').join(' | '),
         submitted_at: new Date().toISOString(),
         ...tracking
     };
