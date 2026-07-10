@@ -8,11 +8,12 @@
 
   Optional:
   - ALLOWED_ORIGIN: defaults to https://fitscore.crs365.com
+  - BREVO_TRACKER_KEY: Brevo Tracker client_key/ma-key for automations
 
   Important:
   Any contact attributes sent to Brevo must exist in your Brevo account before
-  they can be stored on the contact. Event properties do not require contact
-  attributes and are used for the Brevo automation trigger.
+  they can be stored on the contact. Tracker event properties do not require
+  contact attributes and are used for the Brevo automation trigger.
 */
 
 const DEFAULT_ALLOWED_ORIGIN = 'https://fitscore.crs365.com';
@@ -56,6 +57,40 @@ function numberOrBlank(value) {
   return Number.isFinite(number) ? number : '';
 }
 
+function eventDataFromBody(body) {
+  return {
+    source: 'AI Fit Score',
+    top_match: String(body.top_match || ''),
+    top_score: numberOrBlank(body.top_score),
+    top_category: String(body.top_category || ''),
+    top_pricing: String(body.top_pricing || ''),
+    top_setup: String(body.top_setup || ''),
+    top_best_for: String(body.top_best_for || ''),
+    top_matches: String(body.top_matches || ''),
+    company_size: String(body.company_size || ''),
+    industry: String(body.industry || ''),
+    challenges: joinList(body.challenges),
+    budget: String(body.budget || ''),
+    current_tools: joinList(body.current_tools),
+    tech_level: String(body.tech_level || ''),
+    submitted_at: String(body.submitted_at || new Date().toISOString()),
+    utm_source: String(body.utm_source || ''),
+    utm_medium: String(body.utm_medium || ''),
+    utm_campaign: String(body.utm_campaign || ''),
+    utm_content: String(body.utm_content || ''),
+    utm_term: String(body.utm_term || '')
+  };
+}
+
+async function parseResponse(response) {
+  const resultText = await response.text();
+  try {
+    return resultText ? JSON.parse(resultText) : {};
+  } catch (err) {
+    return { raw: resultText };
+  }
+}
+
 async function postFitScoreEvent(env, email, attributes, body) {
   const eventPayload = {
     event_name: FIT_SCORE_EVENT_NAME,
@@ -63,28 +98,7 @@ async function postFitScoreEvent(env, email, attributes, body) {
       email_id: email
     },
     contact_properties: attributes,
-    event_properties: {
-      source: 'AI Fit Score',
-      top_match: String(body.top_match || ''),
-      top_score: numberOrBlank(body.top_score),
-      top_category: String(body.top_category || ''),
-      top_pricing: String(body.top_pricing || ''),
-      top_setup: String(body.top_setup || ''),
-      top_best_for: String(body.top_best_for || ''),
-      top_matches: String(body.top_matches || ''),
-      company_size: String(body.company_size || ''),
-      industry: String(body.industry || ''),
-      challenges: joinList(body.challenges),
-      budget: String(body.budget || ''),
-      current_tools: joinList(body.current_tools),
-      tech_level: String(body.tech_level || ''),
-      submitted_at: String(body.submitted_at || new Date().toISOString()),
-      utm_source: String(body.utm_source || ''),
-      utm_medium: String(body.utm_medium || ''),
-      utm_campaign: String(body.utm_campaign || ''),
-      utm_content: String(body.utm_content || ''),
-      utm_term: String(body.utm_term || '')
-    }
+    event_properties: eventDataFromBody(body)
   };
 
   const brevoEventResponse = await fetch('https://api.brevo.com/v3/events', {
@@ -96,18 +110,61 @@ async function postFitScoreEvent(env, email, attributes, body) {
     body: JSON.stringify(eventPayload)
   });
 
-  const resultText = await brevoEventResponse.text();
-  let result;
-  try {
-    result = resultText ? JSON.parse(resultText) : {};
-  } catch (err) {
-    result = { raw: resultText };
-  }
-
   return {
     ok: brevoEventResponse.ok,
     status: brevoEventResponse.status,
-    details: result
+    details: await parseResponse(brevoEventResponse)
+  };
+}
+
+async function postTrackerFitScoreEvent(env, email, attributes, body) {
+  const trackerKey = env.BREVO_TRACKER_KEY || env.BREVO_MA_KEY;
+  if (!trackerKey) {
+    return {
+      ok: false,
+      skipped: true,
+      reason: 'BREVO_TRACKER_KEY is not configured'
+    };
+  }
+
+  const eventData = eventDataFromBody(body);
+  const trackerPayload = {
+    email,
+    event: FIT_SCORE_EVENT_NAME,
+    properties: {
+      FIRSTNAME: attributes.FIRSTNAME,
+      LASTNAME: attributes.LASTNAME,
+      COMPANY: attributes.COMPANY,
+      CRS_SOURCE: attributes.CRS_SOURCE,
+      CRS_COMPANY_SIZE: attributes.CRS_COMPANY_SIZE,
+      CRS_INDUSTRY: attributes.CRS_INDUSTRY,
+      CRS_CHALLENGES: attributes.CRS_CHALLENGES,
+      CRS_BUDGET: attributes.CRS_BUDGET,
+      CRS_CURRENT_TOOLS: attributes.CRS_CURRENT_TOOLS,
+      CRS_TECH_LEVEL: attributes.CRS_TECH_LEVEL,
+      CRS_TOP_MATCH: attributes.CRS_TOP_MATCH,
+      CRS_TOP_SCORE: attributes.CRS_TOP_SCORE
+    },
+    eventdata: {
+      id: `crs_fit_score:${String(body.submitted_at || Date.now())}`,
+      data: eventData
+    }
+  };
+
+  const trackerResponse = await fetch('https://in-automate.brevo.com/api/v2/trackEvent', {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      'ma-key': trackerKey
+    },
+    body: JSON.stringify(trackerPayload)
+  });
+
+  return {
+    ok: trackerResponse.ok,
+    status: trackerResponse.status,
+    details: await parseResponse(trackerResponse)
   };
 }
 
@@ -179,13 +236,7 @@ export default {
       body: JSON.stringify(payload)
     });
 
-    const resultText = await brevoResponse.text();
-    let result;
-    try {
-      result = resultText ? JSON.parse(resultText) : {};
-    } catch (err) {
-      result = { raw: resultText };
-    }
+    const result = await parseResponse(brevoResponse);
 
     if (!brevoResponse.ok) {
       return jsonResponse({ error: 'Brevo request failed', details: result }, brevoResponse.status, env);
@@ -198,6 +249,13 @@ export default {
       eventResult = { ok: false, error: err.message || 'Event request failed' };
     }
 
-    return jsonResponse({ ok: true, brevo: result, event: eventResult }, 200, env);
+    let trackerResult;
+    try {
+      trackerResult = await postTrackerFitScoreEvent(env, email, attributes, body);
+    } catch (err) {
+      trackerResult = { ok: false, error: err.message || 'Tracker event request failed' };
+    }
+
+    return jsonResponse({ ok: true, brevo: result, event: eventResult, tracker: trackerResult }, 200, env);
   }
 };

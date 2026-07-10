@@ -6,9 +6,10 @@ Send these values to the Worker as environment variables:
 
 - `BREVO_API_KEY`: private API key from Brevo.
 - `BREVO_LIST_ID`: `17` for the `CRS AI Fit Score` list.
+- `BREVO_TRACKER_KEY`: Brevo Tracker `client_key` / `ma-key`, used by Brevo automation custom-event triggers.
 - `ALLOWED_ORIGIN`: optional. Use `https://fitscore.crs365.com`.
 
-Do not put the Brevo API key in `app.js`, `index.html`, GitHub Pages, or any browser-visible file.
+Do not put the Brevo API key or Tracker key in `app.js`, `index.html`, GitHub Pages, or any browser-visible file.
 
 ## Brevo List
 
@@ -45,7 +46,13 @@ The Worker posts this Brevo custom event after the contact is created or updated
 
 `crs_fit_score_completed`
 
-Use this event as the primary automation trigger. It includes event properties for branching and personalization without needing extra contact attributes:
+Brevo has two event systems. The automation builder's `Custom event` trigger listens for Brevo Tracker events, so the Worker sends the event to:
+
+`https://in-automate.brevo.com/api/v2/trackEvent`
+
+The Worker also sends the same data to the newer Brevo Events API for event history, but the Tracker event is the one to use for this workflow trigger.
+
+The event includes properties for branching and personalization without needing extra contact attributes:
 
 - `top_match`
 - `top_score`
@@ -62,6 +69,21 @@ Use this event as the primary automation trigger. It includes event properties f
 - `tech_level`
 - `submitted_at`
 - `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`
+
+## Getting The Tracker Key
+
+In Brevo, open the Brevo Tracker / website tracking setup. The tracker snippet contains a value like this:
+
+```html
+Brevo.push([
+  "init",
+  {
+    client_key: "YOUR_CLIENT_KEY"
+  }
+]);
+```
+
+Use that `client_key` value as the Cloudflare Worker secret named `BREVO_TRACKER_KEY`.
 
 ## Recommended Brevo Workflow
 
@@ -136,5 +158,10 @@ Use a fresh test email address on `https://fitscore.crs365.com` and complete the
 
 1. The contact is on list `CRS AI Fit Score`.
 2. The contact has the `CRS_*` attributes populated.
-3. The event `crs_fit_score_completed` appears for the contact.
-4. The workflow starts from that event.
+3. The Worker response includes `tracker.status: 204`.
+4. The event `crs_fit_score_completed` appears for the contact or is caught by the automation `Test` screen.
+5. The workflow starts from that event.
+
+If the custom event trigger still refuses to detect the event, use this fallback entry trigger while troubleshooting:
+
+`Contact added to list` -> `CRS AI Fit Score`
