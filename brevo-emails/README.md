@@ -55,7 +55,7 @@ These five HTML emails are ready for Brevo's HTML custom code editor.
 
 The HTML uses Brevo's live contact variables for first name, top match, and top score. Each variable includes fallback text, so a missing value will not leave a blank sentence. Each message also includes Brevo's unsubscribe, update profile, and mirror links.
 
-Before activation, confirm Brevo's account-level footer adds the verified business mailing address required for marketing email compliance. The templates do not invent or hard-code an address.
+Each template identifies itself as a commercial email and includes an unsubscribe link. Before activation, confirm Brevo's account-level footer also adds the verified business mailing address required for marketing email compliance. The templates do not invent or hard-code an address.
 
 ## Import
 
