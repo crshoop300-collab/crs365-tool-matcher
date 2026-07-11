@@ -46,7 +46,7 @@ These five HTML emails are ready for Brevo's HTML custom code editor.
 
 ## Brevo settings
 
-1. Use sender name Chad Shoop | CRS365.
+1. Use sender name CRS365 Team.
 2. Use the verified CRS365 sender address in the Brevo account.
 3. Set replies to the inbox Chad monitors.
 4. Keep open and click tracking enabled.
