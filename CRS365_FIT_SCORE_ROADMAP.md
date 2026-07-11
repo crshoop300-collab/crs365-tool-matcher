@@ -32,5 +32,10 @@ The CRS365 tool matcher is a static GitHub Pages app hosted at `fitscore.crs365.
 3. Remove or substantiate customer-count and performance claims.
 4. Keep ad copy focused on business workflow, AI readiness, and operational improvement.
 
+## Email Nurture Status
 
-
+1. Brevo entry event crs_fit_score_completed is active and tested.
+2. Five branded HTML nurture emails are complete in the brevo-emails folder.
+3. The sequence runs immediately, then after waits of 1, 2, 2, and 3 days.
+4. Each message includes tracked consultation links and Brevo unsubscribe, preference, and browser-view links.
+5. Next optimization: collect baseline open, click, reply, and booking data before splitting the sequence by recommendation category.
