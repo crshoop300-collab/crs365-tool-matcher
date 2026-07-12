@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRS365 Blueprint Hero Background</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:1600px;height:900px;overflow:hidden;background:#0f2744}
+.scene{position:relative;width:1600px;height:900px;background:#0f2744;overflow:hidden}
+.safe{position:absolute;inset:0 690px 0 0;background:#0f2744}
+.rule{position:absolute;left:0;right:0;height:1px;background:rgba(127,209,200,.18)}
+.rule.r1{top:145px}.rule.r2{top:450px}.rule.r3{top:755px}
+.node{position:absolute;border:1px solid rgba(127,209,200,.22);background:rgba(13,95,95,.14);height:54px}
+.n1{width:180px;right:590px;top:165px}.n2{width:150px;right:400px;top:165px}.n3{width:200px;right:165px;top:165px}
+.connector{position:absolute;top:192px;height:1px;background:rgba(184,135,24,.38)}
+.c1{width:40px;right:550px}.c2{width:35px;right:365px}
+.paper-back{position:absolute;width:520px;height:675px;right:120px;top:115px;background:#e8eef1;transform:rotate(-3deg);box-shadow:0 28px 70px rgba(0,0,0,.3)}
+.paper{position:absolute;width:520px;height:675px;right:92px;top:102px;background:#fff;transform:rotate(3.5deg);box-shadow:0 34px 80px rgba(0,0,0,.42);overflow:hidden}
+.paper img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="safe"></div>
+  <div class="rule r1"></div><div class="rule r2"></div><div class="rule r3"></div>
+  <div class="node n1"></div><div class="node n2"></div><div class="node n3"></div>
+  <div class="connector c1"></div><div class="connector c2"></div>
+  <div class="paper-back"></div>
+  <div class="paper"><img src="./blueprint-report-preview.png" alt=""></div>
+  <div class="label">CRS365 AI Automation Blueprint</div>
+</div>
+</body>
+</html>

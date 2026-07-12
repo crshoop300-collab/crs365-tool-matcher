@@ -1,0 +1,446 @@
+<style>
+.crs-blueprint {
+  --navy:#0f2744;
+  --navy-2:#1a3a5c;
+  --teal:#0d5f5f;
+  --teal-dark:#0a4848;
+  --green:#147a50;
+  --gold:#b88718;
+  --ink:#1f3549;
+  --muted:#5c7082;
+  --line:#dce4e9;
+  --soft:#f3f7f7;
+  --white:#ffffff;
+  color:var(--ink);
+  background:var(--white);
+  font-family:Arial,Helvetica,sans-serif;
+  letter-spacing:0;
+  margin:0;
+}
+.crs-blueprint * { box-sizing:border-box; letter-spacing:0; }
+.crs-blueprint a { color:inherit; }
+.crs-blueprint .crs-wrap { width:min(1120px,calc(100% - 40px)); margin:0 auto; }
+.crs-blueprint .crs-hero {
+  position:relative;
+  height:calc(100svh - 56px);
+  min-height:540px;
+  max-height:720px;
+  color:var(--white);
+  background-color:var(--navy);
+  background-image:url("https://fitscore.crs365.com/premium-offer/assets/blueprint-hero-background.png");
+  background-size:cover;
+  background-position:center 18%;
+  overflow:hidden;
+}
+.crs-blueprint .crs-hero::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(8,31,51,.84);
+}
+.crs-blueprint .crs-hero-inner {
+  position:relative;
+  z-index:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:26px 0 44px;
+}
+.crs-blueprint .crs-brand {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  font-size:16px;
+  font-weight:800;
+}
+.crs-blueprint .crs-brand a { color:#d7e7e7; text-decoration:none; font-size:14px; }
+.crs-blueprint .crs-hero-copy { max-width:780px; }
+.crs-blueprint .crs-kicker {
+  margin:0 0 14px;
+  color:#7fd1c8;
+  font-size:13px;
+  line-height:20px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.crs-blueprint h1 {
+  margin:0 0 18px;
+  max-width:760px;
+  color:var(--white);
+  font-size:52px;
+  line-height:1.08;
+  font-weight:800;
+}
+.crs-blueprint .crs-hero-copy > p {
+  margin:0 0 24px;
+  max-width:720px;
+  color:#e6edef;
+  font-size:20px;
+  line-height:1.55;
+}
+.crs-blueprint .crs-meta {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 22px;
+  margin:0 0 26px;
+  color:#ffffff;
+  font-size:15px;
+  line-height:24px;
+  font-weight:700;
+}
+.crs-blueprint .crs-meta span { border-left:3px solid #c79a32; padding-left:10px; }
+.crs-blueprint .crs-actions { display:flex; flex-wrap:wrap; align-items:center; gap:14px 22px; }
+.crs-blueprint .crs-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:50px;
+  padding:14px 22px;
+  border:1px solid var(--teal);
+  border-radius:4px;
+  background:var(--teal);
+  color:var(--white);
+  font-size:16px;
+  line-height:20px;
+  font-weight:800;
+  text-decoration:none;
+}
+.crs-blueprint .crs-btn:hover { background:var(--teal-dark); border-color:var(--teal-dark); }
+.crs-blueprint .crs-text-link { color:#ffffff; font-weight:700; text-underline-offset:4px; }
+.crs-blueprint .crs-band { padding:72px 0; }
+.crs-blueprint .crs-band-soft { background:var(--soft); }
+.crs-blueprint .crs-band-navy { background:var(--navy); color:var(--white); }
+.crs-blueprint .crs-intro { max-width:860px; }
+.crs-blueprint .crs-eyebrow {
+  margin:0 0 12px;
+  color:var(--teal);
+  font-size:13px;
+  line-height:20px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.crs-blueprint h2 {
+  margin:0 0 18px;
+  color:var(--navy);
+  font-size:38px;
+  line-height:1.18;
+  font-weight:800;
+}
+.crs-blueprint h3 {
+  margin:0 0 10px;
+  color:var(--navy-2);
+  font-size:21px;
+  line-height:1.3;
+}
+.crs-blueprint p { font-size:17px; line-height:1.7; }
+.crs-blueprint .crs-lead { margin:0; color:var(--muted); font-size:20px; line-height:1.6; }
+.crs-blueprint .crs-preview-grid {
+  display:grid;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  gap:68px;
+  align-items:center;
+}
+.crs-blueprint .crs-report-image {
+  width:100%;
+  max-width:480px;
+  margin:0 auto;
+  display:block;
+  border:1px solid #cfd9df;
+  box-shadow:0 20px 44px rgba(15,39,68,.14);
+}
+.crs-blueprint .crs-checks {
+  list-style:none;
+  padding:0;
+  margin:26px 0 0;
+}
+.crs-blueprint .crs-checks li {
+  position:relative;
+  margin:0 0 14px;
+  padding-left:30px;
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+}
+.crs-blueprint .crs-checks li::before {
+  content:"+";
+  position:absolute;
+  left:0;
+  top:0;
+  color:var(--green);
+  font-weight:900;
+  font-size:21px;
+}
+.crs-blueprint .crs-section-head { max-width:760px; margin-bottom:34px; }
+.crs-blueprint .crs-card-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.crs-blueprint .crs-card {
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:var(--white);
+  padding:24px;
+}
+.crs-blueprint .crs-card-number {
+  display:block;
+  margin-bottom:16px;
+  color:var(--gold);
+  font-size:13px;
+  line-height:18px;
+  font-weight:800;
+}
+.crs-blueprint .crs-card p { margin:0; color:var(--muted); font-size:15px; line-height:1.6; }
+.crs-blueprint .crs-process {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+  border-top:1px solid rgba(255,255,255,.24);
+}
+.crs-blueprint .crs-step {
+  padding:28px 28px 6px 0;
+  border-right:1px solid rgba(255,255,255,.24);
+}
+.crs-blueprint .crs-step + .crs-step { padding-left:28px; }
+.crs-blueprint .crs-step:last-child { border-right:0; }
+.crs-blueprint .crs-step strong { display:block; margin-bottom:10px; color:#7fd1c8; font-size:14px; }
+.crs-blueprint .crs-step h3 { color:var(--white); }
+.crs-blueprint .crs-step p { margin:0; color:#cfdbdf; font-size:15px; line-height:1.6; }
+.crs-blueprint .crs-band-navy h2 { color:var(--white); }
+.crs-blueprint .crs-band-navy .crs-eyebrow { color:#7fd1c8; }
+.crs-blueprint .crs-scope-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+}
+.crs-blueprint .crs-scope-col { border-top:4px solid var(--teal); padding-top:22px; }
+.crs-blueprint .crs-scope-col.crs-excluded { border-top-color:var(--gold); }
+.crs-blueprint .crs-scope-col ul { margin:20px 0 0; padding-left:20px; }
+.crs-blueprint .crs-scope-col li { margin:0 0 12px; font-size:16px; line-height:1.55; }
+.crs-blueprint .crs-price-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 290px;
+  gap:56px;
+  align-items:center;
+}
+.crs-blueprint .crs-price {
+  padding:28px;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:6px;
+  text-align:center;
+}
+.crs-blueprint .crs-price strong { display:block; font-size:48px; line-height:1; }
+.crs-blueprint .crs-price span { display:block; margin-top:10px; color:#cfdbdf; font-size:14px; line-height:1.5; }
+.crs-blueprint .crs-price-layout p { color:#cfdbdf; }
+.crs-blueprint .crs-faq { max-width:860px; }
+.crs-blueprint details { border-top:1px solid var(--line); padding:18px 0; }
+.crs-blueprint details:last-child { border-bottom:1px solid var(--line); }
+.crs-blueprint summary { cursor:pointer; color:var(--navy); font-size:17px; line-height:1.5; font-weight:800; }
+.crs-blueprint details p { margin:12px 0 0; color:var(--muted); font-size:15px; line-height:1.65; }
+.crs-blueprint .crs-final { text-align:center; }
+.crs-blueprint .crs-final .crs-lead { max-width:720px; margin:0 auto 28px; }
+.crs-blueprint .crs-footer {
+  padding:28px 0;
+  background:#0b1d30;
+  color:#aebdc6;
+  font-size:13px;
+  line-height:1.6;
+}
+.crs-blueprint .crs-footer-row { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.crs-blueprint .crs-footer a { color:#d6e0e5; }
+@media (max-width:900px) {
+  .crs-blueprint h1 { font-size:44px; }
+  .crs-blueprint .crs-card-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .crs-blueprint .crs-process { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .crs-blueprint .crs-step:nth-child(2) { border-right:0; }
+  .crs-blueprint .crs-step:nth-child(3), .crs-blueprint .crs-step:nth-child(4) { border-top:1px solid rgba(255,255,255,.24); }
+  .crs-blueprint .crs-step:nth-child(3) { padding-left:0; }
+}
+@media (max-width:700px) {
+  .crs-blueprint .crs-wrap { width:min(100% - 28px,1120px); }
+  .crs-blueprint .crs-hero { min-height:520px; height:calc(100svh - 42px); }
+  .crs-blueprint .crs-hero-inner { padding:20px 0 28px; }
+  .crs-blueprint .crs-brand a { display:none; }
+  .crs-blueprint h1 { font-size:37px; line-height:1.1; }
+  .crs-blueprint .crs-hero-copy > p { font-size:17px; line-height:1.5; }
+  .crs-blueprint .crs-meta { font-size:14px; margin-bottom:20px; }
+  .crs-blueprint .crs-band { padding:52px 0; }
+  .crs-blueprint h2 { font-size:31px; }
+  .crs-blueprint .crs-lead { font-size:18px; }
+  .crs-blueprint .crs-preview-grid,
+  .crs-blueprint .crs-scope-grid,
+  .crs-blueprint .crs-price-layout { grid-template-columns:1fr; gap:36px; }
+  .crs-blueprint .crs-card-grid { grid-template-columns:1fr; }
+  .crs-blueprint .crs-process { grid-template-columns:1fr; }
+  .crs-blueprint .crs-step,
+  .crs-blueprint .crs-step + .crs-step {
+    padding:22px 0;
+    border-right:0;
+    border-top:1px solid rgba(255,255,255,.24);
+  }
+  .crs-blueprint .crs-actions { align-items:stretch; flex-direction:column; }
+  .crs-blueprint .crs-btn { width:100%; }
+  .crs-blueprint .crs-text-link { text-align:center; }
+}
+</style>
+
+<main class="crs-blueprint">
+  <section class="crs-hero">
+    <div class="crs-wrap crs-hero-inner">
+      <div class="crs-brand">
+        <span>CRS365</span>
+        <a href="https://fitscore.crs365.com/?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint">Start with the free AI Fit Score</a>
+      </div>
+      <div class="crs-hero-copy">
+        <p class="crs-kicker">Fixed-scope advisory engagement</p>
+        <h1>CRS365 AI Automation Blueprint</h1>
+        <p>A decision-ready plan for one priority workflow, including what to automate, what should remain human-controlled, which tools should do the work, and how to roll it out during the first 30 days.</p>
+        <div class="crs-meta">
+          <span>$995 fixed fee</span>
+          <span>One priority workflow</span>
+          <span>Five-business-day turnaround</span>
+        </div>
+        <div class="crs-actions">
+          <a class="crs-btn" href="https://calendly.com/chadshoop/30-minute-consult?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=hero">Book Your Blueprint Fit Call</a>
+          <a class="crs-text-link" href="#blueprint-includes">See what is included</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band">
+    <div class="crs-wrap crs-intro">
+      <p class="crs-eyebrow">From recommendation to operating plan</p>
+      <h2>Your AI Fit Score points to the opportunity. The Blueprint maps the work.</h2>
+      <p class="crs-lead">Buying another tool does not fix an unclear workflow. CRS365 starts with the process, the people, the data, and the decisions. You leave with a focused plan your team can evaluate and implement.</p>
+    </div>
+  </section>
+
+  <section class="crs-band crs-band-soft">
+    <div class="crs-wrap crs-preview-grid">
+      <div>
+        <img class="crs-report-image" src="https://fitscore.crs365.com/premium-offer/assets/blueprint-report-preview.png" alt="Preview of the CRS365 AI Automation Blueprint report">
+      </div>
+      <div>
+        <p class="crs-eyebrow">A real client deliverable</p>
+        <h2>Clear enough to make a decision. Specific enough to guide implementation.</h2>
+        <p>The Blueprint turns discovery into a documented current state, a practical future state, tool roles, control points, ownership, and a sequenced 30-day rollout.</p>
+        <ul class="crs-checks">
+          <li>Built around one workflow with a named owner and measurable outcome</li>
+          <li>Designed around the tools and technical comfort of your team</li>
+          <li>Explicit about exceptions, sensitive data, and human approvals</li>
+          <li>Delivered as an editable Word document plus a findings review</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band" id="blueprint-includes">
+    <div class="crs-wrap">
+      <div class="crs-section-head">
+        <p class="crs-eyebrow">What you receive</p>
+        <h2>Nine components that turn a good idea into a usable plan</h2>
+      </div>
+      <div class="crs-card-grid">
+        <article class="crs-card"><span class="crs-card-number">01</span><h3>Business objective</h3><p>A precise outcome, workflow boundary, owner, and definition of success.</p></article>
+        <article class="crs-card"><span class="crs-card-number">02</span><h3>Current-state workflow</h3><p>The trigger, inputs, steps, decisions, handoffs, systems, and completed output.</p></article>
+        <article class="crs-card"><span class="crs-card-number">03</span><h3>Friction analysis</h3><p>Delays, repetitive work, rework, data gaps, exceptions, and operational risk.</p></article>
+        <article class="crs-card"><span class="crs-card-number">04</span><h3>Readiness scorecard</h3><p>Process, data, ownership, integration, governance, and adoption readiness.</p></article>
+        <article class="crs-card"><span class="crs-card-number">05</span><h3>Future-state design</h3><p>A step-by-step view of the improved workflow and where automation belongs.</p></article>
+        <article class="crs-card"><span class="crs-card-number">06</span><h3>Tool and data plan</h3><p>Recommended tool roles, integrations, system of record, and data movement.</p></article>
+        <article class="crs-card"><span class="crs-card-number">07</span><h3>Human controls</h3><p>Approvals, exception handling, quality checks, access boundaries, and escalation.</p></article>
+        <article class="crs-card"><span class="crs-card-number">08</span><h3>30-day roadmap</h3><p>Four weeks of actions, owners, dependencies, and acceptance checks.</p></article>
+        <article class="crs-card"><span class="crs-card-number">09</span><h3>Findings review</h3><p>A 45-minute review to explain the recommendation and answer clarifying questions.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band crs-band-navy">
+    <div class="crs-wrap">
+      <div class="crs-section-head">
+        <p class="crs-eyebrow">How it works</p>
+        <h2>A focused engagement with a defined finish line</h2>
+      </div>
+      <div class="crs-process">
+        <div class="crs-step"><strong>STEP 1</strong><h3>Fit call</h3><p>We confirm the workflow, decision maker, available inputs, and whether the scope is right.</p></div>
+        <div class="crs-step"><strong>STEP 2</strong><h3>Kickoff</h3><p>A 60-minute working session validates the current workflow, constraints, and success measure.</p></div>
+        <div class="crs-step"><strong>STEP 3</strong><h3>Blueprint</h3><p>CRS365 analyzes the workflow and delivers the written plan within five business days.</p></div>
+        <div class="crs-step"><strong>STEP 4</strong><h3>Review</h3><p>We walk through the findings, answer questions, and confirm the next decision.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band">
+    <div class="crs-wrap crs-scope-grid">
+      <div class="crs-scope-col">
+        <p class="crs-eyebrow">Designed for</p>
+        <h2>A workflow your team is ready to improve</h2>
+        <ul>
+          <li>A recurring process with a visible delay, burden, or handoff problem</li>
+          <li>A named workflow owner and access to representative examples</li>
+          <li>Up to five core applications reviewed in depth</li>
+          <li>A team that wants a practical plan before purchasing or implementing more technology</li>
+        </ul>
+      </div>
+      <div class="crs-scope-col crs-excluded">
+        <p class="crs-eyebrow">Separate scope</p>
+        <h2>Implementation is not hidden inside the Blueprint</h2>
+        <ul>
+          <li>Software configuration, custom development, and data migration</li>
+          <li>Vendor procurement, legal advice, or cybersecurity testing</li>
+          <li>Additional workflows or broad organization-wide transformation</li>
+          <li>Ongoing administration, support, and optimization</li>
+        </ul>
+        <p>When implementation is appropriate, CRS365 can prepare a separate scope and quote after the Blueprint is complete.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band crs-band-navy">
+    <div class="crs-wrap crs-price-layout">
+      <div>
+        <p class="crs-eyebrow">Fixed investment</p>
+        <h2>Know the scope, price, and deliverable before the work begins.</h2>
+        <p>The Blueprint includes the kickoff, analysis, written deliverable, findings review, and one clarification revision requested within seven days.</p>
+        <a class="crs-btn" href="https://calendly.com/chadshoop/30-minute-consult?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=pricing">Book Your Blueprint Fit Call</a>
+      </div>
+      <div class="crs-price">
+        <strong>$995</strong>
+        <span>Fixed fee<br>Five-business-day turnaround<br>Implementation quoted separately</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band">
+    <div class="crs-wrap crs-faq">
+      <div class="crs-section-head">
+        <p class="crs-eyebrow">Questions</p>
+        <h2>Before you book</h2>
+      </div>
+      <details><summary>Do I need to know which software I want?</summary><p>No. CRS365 evaluates the workflow before recommending tool roles. Existing tools are considered first so the plan does not create unnecessary software expense.</p></details>
+      <details><summary>Will CRS365 build the automation?</summary><p>Implementation is not included in the $995 Blueprint. If implementation is appropriate, CRS365 can provide a separate scope after the findings review.</p></details>
+      <details><summary>What does â€œone workflowâ€ mean?</summary><p>One workflow has a defined trigger, a bounded sequence of steps, a completed output, and a named owner. Separate departments or unrelated processes require separate scope.</p></details>
+      <details><summary>What if our process is not documented?</summary><p>That can still fit when the workflow owner can explain the process and provide representative examples. The kickoff is used to validate the current state.</p></details>
+      <details><summary>Are savings or performance improvements guaranteed?</summary><p>No. The Blueprint provides recommendations based on the information available during the engagement. Results depend on implementation, adoption, data quality, vendor capabilities, and business conditions.</p></details>
+      <details><summary>What happens after the fit call?</summary><p>If the workflow fits the offer, CRS365 sends the fixed-fee agreement, payment instructions, intake, and kickoff scheduling link. Booking the fit call does not create a purchase obligation.</p></details>
+    </div>
+  </section>
+
+  <section class="crs-band crs-band-soft">
+    <div class="crs-wrap crs-final">
+      <p class="crs-eyebrow">Start with one workflow</p>
+      <h2>Turn your Fit Score into a plan your team can use.</h2>
+      <p class="crs-lead">Bring the recurring process creating the most friction. We will determine whether it fits the Blueprint and what information is needed to begin.</p>
+      <a class="crs-btn" href="https://calendly.com/chadshoop/30-minute-consult?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=final">Book Your Blueprint Fit Call</a>
+    </div>
+  </section>
+
+  <footer class="crs-footer">
+    <div class="crs-wrap crs-footer-row">
+      <span>Â© 2026 Consulting Research Services. All rights reserved.</span>
+      <span><a href="https://crs365.com/privacy-policy/">Privacy Policy</a> &nbsp;|&nbsp; <a href="https://crs365.com/terms-of-service/">Terms of Service</a></span>
+    </div>
+  </footer>
+</main>

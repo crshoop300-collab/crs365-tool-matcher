@@ -3,3 +3,4 @@
 .dev.vars.*
 .env
 .env.*
+premium-offer/_render/
