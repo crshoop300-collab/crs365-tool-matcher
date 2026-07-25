@@ -25,6 +25,15 @@ The CRS365 tool matcher is a static GitHub Pages app hosted at `fitscore.crs365.
 4. Lead users toward the CRS365 AI Automation Blueprint as the core paid offer.
 5. Use the email sequence to nurture toward the Blueprint, then into an implementation sprint or retainer.
 
+## Dual-Funnel Architecture
+
+1. Funnel A starts with the CRS365 AI Fit Score and identifies tool categories, readiness gaps, and a practical starting direction.
+2. Funnel B starts with the CRS365 7-Day AI Operations Audit and identifies repeated work, software-stack gaps, priority bottlenecks, and a draft 30-day roadmap.
+3. Both funnels lead to the CRS365 AI Automation Blueprint page.
+4. The Blueprint page leads to a 30-minute fit call for one priority workflow.
+5. Qualified prospects receive the fixed-fee agreement and $995 payment request.
+6. Booked and paid contacts exit both nurture sequences.
+
 ## Compliance and Trust Priority
 
 1. Add explicit email consent language near the form.
@@ -47,4 +56,5 @@ The CRS365 tool matcher is a static GitHub Pages app hosted at `fitscore.crs365.
 3. The sales page, WordPress block, report visuals, intake, call guide, fulfillment checklist, and editable Word deliverable are complete in the premium-offer folder.
 4. Turnaround is five business days after kickoff and receipt of required materials.
 5. Implementation remains a separate scope and quote.
-6. Next activation steps are publishing the WordPress page, creating the agreement and payment request, and adding booked, paid, and delivered conversion events.
+6. The offer page now recognizes both the AI Fit Score and 7-Day AI Audit as valid starting points.
+7. Next activation steps are publishing the WordPress page, wiring the Audit opt-in to Brevo, creating the Audit nurture, creating the agreement and payment request, and adding booked, paid, and delivered conversion events.

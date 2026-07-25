@@ -21,7 +21,7 @@ The Blueprint is not a fit when the prospect wants immediate implementation, unl
 
 ### Minutes 0-3: Set expectations
 
-â€œThanks for sharing your Fit Score. I would like to understand the workflow creating the most friction, determine whether it fits the Blueprint scope, and explain what you would receive. We can then decide whether a next step makes sense.â€
+"Thanks for sharing what you learned from the CRS365 Fit Score or 7-Day Audit. I would like to understand the workflow creating the most friction, determine whether it fits the Blueprint scope, and explain what you would receive. We can then decide whether a next step makes sense."
 
 ### Minutes 3-12: Establish the problem
 
@@ -48,7 +48,7 @@ Ask:
 
 ### Minutes 20-25: Present the offer
 
-â€œThe CRS365 AI Automation Blueprint is a fixed-scope engagement for one priority workflow. We map the current process, identify bottlenecks and readiness gaps, design the future workflow, recommend the tools and controls, and deliver a 30-day rollout plan. It includes a 60-minute kickoff, the written Blueprint, and a 45-minute findings review. The fee is $995, and delivery is five business days after the kickoff and receipt of the required materials.â€
+"The CRS365 AI Automation Blueprint is a fixed-scope engagement for one priority workflow. We map the current process, identify bottlenecks and readiness gaps, design the future workflow, recommend the tools and controls, and deliver a 30-day rollout plan. It includes a 60-minute kickoff, the written Blueprint, and a 45-minute findings review. The fee is $995, and delivery is five business days after the kickoff and receipt of the required materials."
 
 Clarify that implementation is not included and is quoted separately only if requested.
 
@@ -56,15 +56,15 @@ Clarify that implementation is not included and is quoted separately only if req
 
 If fit is strong:
 
-â€œBased on what you described, this workflow fits the Blueprint. The next step is the fixed-fee agreement and payment. After that, you will receive the intake and kickoff link.â€
+"Based on what you described, this workflow fits the Blueprint. The next step is the fixed-fee agreement and payment. After that, you will receive the intake and kickoff link."
 
 If fit is unclear:
 
-â€œI do not want to force this workflow into the Blueprint scope. Let us first confirm the owner, available inputs, and the specific outcome. I will send a short list of what is missing.â€
+"I do not want to force this workflow into the Blueprint scope. Let us first confirm the owner, available inputs, and the specific outcome. I will send a short list of what is missing."
 
 If not a fit:
 
-â€œThis needs implementation, legal or security review, or broader process work beyond the Blueprint. I would rather be direct about that than sell you the wrong engagement.â€
+"This needs implementation, legal or security review, or broader process work beyond the Blueprint. I would rather be direct about that than sell you the wrong engagement."
 
 ## Follow-up message
 

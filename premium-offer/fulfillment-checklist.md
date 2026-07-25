@@ -16,7 +16,7 @@
 - Duplicate the Blueprint Word template.
 - Set the five-business-day delivery date.
 - Add the 45-minute findings review to the calendar.
-- Record source, Fit Score, top recommendation, and booked date in Brevo or the operating tracker.
+- Record lead source, Fit Score or Audit findings, top recommendation or bottleneck, and booked date in Brevo or the operating tracker.
 
 ## Kickoff preparation
 

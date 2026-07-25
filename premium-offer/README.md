@@ -1,6 +1,6 @@
 # CRS365 AI Automation Blueprint
 
-The CRS365 AI Automation Blueprint is the fixed-scope premium offer that follows the free AI Fit Score.
+The CRS365 AI Automation Blueprint is the fixed-scope premium offer that follows either of CRS365's two free diagnostic paths: the AI Fit Score or the 7-Day AI Operations Audit.
 
 ## Offer summary
 
@@ -9,7 +9,7 @@ The CRS365 AI Automation Blueprint is the fixed-scope premium offer that follows
 - Turnaround: five business days after the kickoff and receipt of required materials
 - Included meetings: 60-minute kickoff and 45-minute findings review
 - Included revision: one clarification revision requested within seven days of delivery
-- Primary CTA: book a 30-minute Fit Score review
+- Primary CTA: book a 30-minute Blueprint fit call
 - Booking URL: https://calendly.com/chadshoop/30-minute-consult
 - Proposed public page: https://crs365.com/ai-automation-blueprint/
 
@@ -39,10 +39,11 @@ The client receives a decision-ready plan that explains what to automate, how th
 
 ## Offer ladder
 
-1. Free CRS365 AI Fit Score
-2. CRS365 AI Automation Blueprint: $995
-3. Automation Implementation Sprint: custom scope and quote
-4. Ongoing AI Operations Optimization: custom monthly engagement
+1. Free diagnostic path A: CRS365 AI Fit Score
+2. Free diagnostic path B: CRS365 7-Day AI Operations Audit
+3. CRS365 AI Automation Blueprint: $995
+4. Automation Implementation Sprint: custom scope and quote
+5. Ongoing AI Operations Optimization: custom monthly engagement
 
 Review pricing and scope after the first five paid Blueprint clients. Track delivery time, revision load, implementation conversion, and client-reported value before changing the fee.
 
@@ -61,11 +62,11 @@ Review pricing and scope after the first five paid Blueprint clients. Track deli
 3. Choose the site's full-width page template and hide the default page title and sidebar.
 4. Paste ai-automation-blueprint-wordpress-block.html into one WordPress Custom HTML block.
 5. Publish and verify the hero image, report preview, Calendly links, privacy link, terms link, desktop layout, and mobile layout.
-6. Only after the page is live, update the Fit Score and nurture emails to link to the public offer page.
+6. Only after the page is live, update both the Fit Score nurture and 7-Day Audit nurture to link to the public offer page.
 
 ## Purchase and delivery flow
 
-1. Prospect books the free 30-minute Blueprint fit call.
+1. Prospect arrives with AI Fit Score results, 7-Day Audit findings, or a clearly defined workflow and books the free 30-minute Blueprint fit call.
 2. CRS365 confirms one qualified workflow and the scope boundaries.
 3. CRS365 sends the fixed-fee agreement and $995 payment request.
 4. After payment, the client receives the intake and 60-minute kickoff link.

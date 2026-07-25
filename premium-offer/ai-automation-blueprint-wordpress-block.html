@@ -55,7 +55,9 @@
   font-size:16px;
   font-weight:800;
 }
+.crs-blueprint .crs-start-links { display:flex; align-items:center; gap:22px; }
 .crs-blueprint .crs-brand a { color:#d7e7e7; text-decoration:none; font-size:14px; }
+.crs-blueprint .crs-brand a:hover { color:#ffffff; text-decoration:underline; text-underline-offset:4px; }
 .crs-blueprint .crs-hero-copy { max-width:780px; }
 .crs-blueprint .crs-kicker {
   margin:0 0 14px;
@@ -113,6 +115,16 @@
 .crs-blueprint .crs-band-soft { background:var(--soft); }
 .crs-blueprint .crs-band-navy { background:var(--navy); color:var(--white); }
 .crs-blueprint .crs-intro { max-width:860px; }
+.crs-blueprint .crs-path-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.crs-blueprint .crs-path { padding:30px 42px 30px 0; }
+.crs-blueprint .crs-path + .crs-path { padding-left:42px; border-left:1px solid var(--line); }
+.crs-blueprint .crs-path p { margin:0 0 16px; color:var(--muted); font-size:16px; line-height:1.65; }
+.crs-blueprint .crs-path a { color:var(--teal); font-weight:800; text-underline-offset:4px; }
 .crs-blueprint .crs-eyebrow {
   margin:0 0 12px;
   color:var(--teal);
@@ -262,7 +274,7 @@
   .crs-blueprint .crs-wrap { width:min(100% - 28px,1120px); }
   .crs-blueprint .crs-hero { min-height:520px; height:calc(100svh - 42px); }
   .crs-blueprint .crs-hero-inner { padding:20px 0 28px; }
-  .crs-blueprint .crs-brand a { display:none; }
+  .crs-blueprint .crs-start-links { display:none; }
   .crs-blueprint h1 { font-size:37px; line-height:1.1; }
   .crs-blueprint .crs-hero-copy > p { font-size:17px; line-height:1.5; }
   .crs-blueprint .crs-meta { font-size:14px; margin-bottom:20px; }
@@ -270,8 +282,13 @@
   .crs-blueprint h2 { font-size:31px; }
   .crs-blueprint .crs-lead { font-size:18px; }
   .crs-blueprint .crs-preview-grid,
+  .crs-blueprint .crs-path-grid,
   .crs-blueprint .crs-scope-grid,
   .crs-blueprint .crs-price-layout { grid-template-columns:1fr; gap:36px; }
+  .crs-blueprint .crs-path-grid { gap:0; }
+  .crs-blueprint .crs-path,
+  .crs-blueprint .crs-path + .crs-path { padding:24px 0; border-left:0; }
+  .crs-blueprint .crs-path + .crs-path { border-top:1px solid var(--line); }
   .crs-blueprint .crs-card-grid { grid-template-columns:1fr; }
   .crs-blueprint .crs-process { grid-template-columns:1fr; }
   .crs-blueprint .crs-step,
@@ -291,7 +308,10 @@
     <div class="crs-wrap crs-hero-inner">
       <div class="crs-brand">
         <span>CRS365</span>
-        <a href="https://fitscore.crs365.com/?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint">Start with the free AI Fit Score</a>
+        <div class="crs-start-links">
+          <a href="https://fitscore.crs365.com/?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=hero_nav_fit_score">AI Fit Score</a>
+          <a href="https://crs365.com/ai-operations-audit-download/?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=hero_nav_audit">7-Day AI Audit</a>
+        </div>
       </div>
       <div class="crs-hero-copy">
         <p class="crs-kicker">Fixed-scope advisory engagement</p>
@@ -312,13 +332,34 @@
 
   <section class="crs-band">
     <div class="crs-wrap crs-intro">
-      <p class="crs-eyebrow">From recommendation to operating plan</p>
-      <h2>Your AI Fit Score points to the opportunity. The Blueprint maps the work.</h2>
-      <p class="crs-lead">Buying another tool does not fix an unclear workflow. CRS365 starts with the process, the people, the data, and the decisions. You leave with a focused plan your team can evaluate and implement.</p>
+      <p class="crs-eyebrow">Two diagnostic paths. One practical next step.</p>
+      <h2>Whether you found the right tool or the right bottleneck, the Blueprint maps the work.</h2>
+      <p class="crs-lead">The AI Fit Score identifies relevant tool categories and readiness gaps. The 7-Day AI Operations Audit surfaces recurring work, bottlenecks, and automation opportunities. The Blueprint turns either starting point into one scoped plan your team can evaluate and implement.</p>
     </div>
   </section>
 
   <section class="crs-band crs-band-soft">
+    <div class="crs-wrap">
+      <div class="crs-section-head">
+        <p class="crs-eyebrow">Start from what you learned</p>
+        <h2>Both free paths lead to one priority workflow.</h2>
+      </div>
+      <div class="crs-path-grid">
+        <div class="crs-path">
+          <h3>From the AI Fit Score</h3>
+          <p>You know which tool categories may fit and where your readiness gaps are. The Blueprint connects that direction to a real workflow, the required data, human controls, ownership, and rollout order.</p>
+          <a href="https://fitscore.crs365.com/?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=path_fit_score">Take the free AI Fit Score</a>
+        </div>
+        <div class="crs-path">
+          <h3>From the 7-Day AI Operations Audit</h3>
+          <p>You have identified repeated work, reviewed your software stack, and ranked bottlenecks. The Blueprint validates the best opportunity and turns the findings into a decision-ready design.</p>
+          <a href="https://crs365.com/ai-operations-audit-download/?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=path_audit">Get the free 7-Day AI Audit</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="crs-band">
     <div class="crs-wrap crs-preview-grid">
       <div>
         <img class="crs-report-image" src="https://fitscore.crs365.com/premium-offer/assets/blueprint-report-preview.png" alt="Preview of the CRS365 AI Automation Blueprint report">
@@ -421,7 +462,7 @@
       </div>
       <details><summary>Do I need to know which software I want?</summary><p>No. CRS365 evaluates the workflow before recommending tool roles. Existing tools are considered first so the plan does not create unnecessary software expense.</p></details>
       <details><summary>Will CRS365 build the automation?</summary><p>Implementation is not included in the $995 Blueprint. If implementation is appropriate, CRS365 can provide a separate scope after the findings review.</p></details>
-      <details><summary>What does â€œone workflowâ€ mean?</summary><p>One workflow has a defined trigger, a bounded sequence of steps, a completed output, and a named owner. Separate departments or unrelated processes require separate scope.</p></details>
+      <details><summary>What does "one workflow" mean?</summary><p>One workflow has a defined trigger, a bounded sequence of steps, a completed output, and a named owner. Separate departments or unrelated processes require separate scope.</p></details>
       <details><summary>What if our process is not documented?</summary><p>That can still fit when the workflow owner can explain the process and provide representative examples. The kickoff is used to validate the current state.</p></details>
       <details><summary>Are savings or performance improvements guaranteed?</summary><p>No. The Blueprint provides recommendations based on the information available during the engagement. Results depend on implementation, adoption, data quality, vendor capabilities, and business conditions.</p></details>
       <details><summary>What happens after the fit call?</summary><p>If the workflow fits the offer, CRS365 sends the fixed-fee agreement, payment instructions, intake, and kickoff scheduling link. Booking the fit call does not create a purchase obligation.</p></details>
@@ -431,7 +472,7 @@
   <section class="crs-band crs-band-soft">
     <div class="crs-wrap crs-final">
       <p class="crs-eyebrow">Start with one workflow</p>
-      <h2>Turn your Fit Score into a plan your team can use.</h2>
+      <h2>Turn your Fit Score or Audit findings into a plan your team can use.</h2>
       <p class="crs-lead">Bring the recurring process creating the most friction. We will determine whether it fits the Blueprint and what information is needed to begin.</p>
       <a class="crs-btn" href="https://calendly.com/chadshoop/30-minute-consult?utm_source=crs365&amp;utm_medium=website&amp;utm_campaign=ai_automation_blueprint&amp;utm_content=final">Book Your Blueprint Fit Call</a>
     </div>
@@ -439,7 +480,7 @@
 
   <footer class="crs-footer">
     <div class="crs-wrap crs-footer-row">
-      <span>Â© 2026 Consulting Research Services. All rights reserved.</span>
+      <span>&copy; 2026 Consulting Research Services. All rights reserved.</span>
       <span><a href="https://crs365.com/privacy-policy/">Privacy Policy</a> &nbsp;|&nbsp; <a href="https://crs365.com/terms-of-service/">Terms of Service</a></span>
     </div>
   </footer>
